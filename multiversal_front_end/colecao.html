@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiversal TCG - Forja de Decks</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/colecao.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <div id="cosmic-bg"></div>
+  <div id="cosmic-trails"></div>
+
+  <nav class="navbar glass-navbar">
+    <div class="navbar-brand">
+      <img src="assets/multiversal_logo.png" alt="Logo" class="brand-logo nav-logo" onclick="location.href='home.html'" style="cursor: pointer;">
+    </div>
+    <div class="deck-stats-top">
+      <span class="label">MEU DECK:</span>
+      <span id="deck-count" class="count">0 / 60</span>
+    </div>
+    <div class="navbar-user">
+      <div class="avatar">Y</div>
+    </div>
+  </nav>
+
+  <main class="builder-container">
+    <section class="builder-column column-pool glass-panel">
+      <div class="column-header">
+        <h2 class="column-title">COLEÇÃO</h2>
+        <div class="filters-bar">
+          <input type="text" id="search-card" placeholder="Buscar carta...">
+          <select id="filter-type">
+            <option value="all">TODOS</option>
+            <option value="monster">MONSTROS</option>
+            <option value="spell">MAGIAS</option>
+          </select>
+        </div>
+      </div>
+      <div class="cards-grid" id="pool-grid"></div>
+    </section>
+
+    <section class="builder-controls">
+      <button class="btn-transfer" id="move-to-deck">▶</button>
+      <button class="btn-transfer" id="move-to-pool">◀</button>
+    </section>
+
+    <section class="builder-column column-deck glass-panel">
+      <div class="column-header">
+        <h2 class="column-title">DECK ATUAL</h2>
+        <button class="btn-pill btn-save" style="padding: 10px 20px; font-size: 0.8rem;">SALVAR</button>
+      </div>
+      <div class="cards-grid" id="deck-grid"></div>
+    </section>
+  </main>
+
+  <div id="card-inspector" class="inspector-overlay hidden">
+    <div class="inspector-content glass-panel">
+      <button class="btn-close-inspector">✕</button>
+      <div class="inspector-visual">
+        <img id="inspected-img" src="" alt="">
+      </div>
+      <div class="inspector-info">
+        <h2 id="inspected-name">NOME DA CARTA</h2>
+        <div class="inspected-stats">
+          <span id="inspected-type">TIPO</span>
+          <span id="inspected-atk-def">ATK/ 0000 DEF/ 0000</span>
+        </div>
+        <p id="inspected-desc">A descrição detalhada da entidade multiversal e suas habilidades aparecerá aqui for sua análise tática.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/visuals.js"></script>
+  <script src="js/colecao.js"></script>
+</body>
+</html>

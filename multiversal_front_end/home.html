@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiversal TCG - Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/home.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <div id="cosmic-bg"></div>
+  <div id="cosmic-trails"></div>
+  
+  <div id="app-container">
+    <section id="screen-home" class="screen active">
+      
+      <nav class="navbar glass-navbar">
+        <div class="navbar-brand">
+          <img src="assets/multiversal_logo.png" alt="Multiversal TCG Logo" class="brand-logo nav-logo">
+        </div>
+        
+        <div class="navbar-user">
+          <div class="user-info">
+            <span class="username">Yarllei</span>
+            <span class="user-title">Duelista Multiversal</span>
+          </div>
+          <div class="avatar">Y</div>
+          
+          <div class="settings-container">
+            <button class="btn-icon" id="btn-settings">⚙️</button>
+            <div class="dropdown-menu" id="settings-menu">
+              <button class="dropdown-item" id="btn-logout-trigger">Sair da Conta</button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main class="home-main">
+        <div class="menu-grid">
+          <div class="modern-card" id="card-quick"onclick="location.href='jogo_rapido.html'">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-icon-wrapper">
+                <img src="assets/yugi_2.png" alt="">
+              </div>
+              <h2>Jogo Rápido</h2>
+              <p>Mergulhe em uma anomalia temporal e enfrente forças multiversais.</p>
+            </div>
+          </div>
+          
+          <div class="modern-card" id="card-standard" onclick="location.href='duelo.html'">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-icon-wrapper">
+                <img src="assets/yugi.png" alt="">
+              </div>
+              <h2>Duelo Tático</h2>
+              <p>Estabeleça sua estratégia multiversal e domine o campo de batalha.</p>
+            </div>
+          </div>
+          
+          <div class="modern-card" id="card-deck" onclick="location.href='colecao.html'">
+            <div class="card-glow"></div>
+            <div class="card-content">
+              <div class="card-icon-wrapper">
+                <img src="assets/gods_cards.png" alt="">
+              </div>
+              <h2>Monte seu Deck</h2>
+              <p>Sintetize entidades cósmicas e relíquias para moldar o baralho supremo.</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <div id="logout-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Desconectar</h2>
+      <p class="modal-text">Deseja realmente sair da sua conta e retornar ao menu inicial?</p>
+      <div class="modal-actions">
+        <button class="btn-pill btn-text" id="btn-cancel-logout">CANCELAR</button>
+        <button class="btn-pill btn-danger" onclick="location.href='index.html'">SAIR</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/visuals.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
