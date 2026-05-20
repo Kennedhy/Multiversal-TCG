@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnLogoutTrigger = document.getElementById('btn-logout-trigger');
   const modalLogout = document.getElementById('logout-modal');
   const btnCancelLogout = document.getElementById('btn-cancel-logout');
+  
+  const cardDuelo = document.getElementById('card-duelo');
+  const modalDuelo = document.getElementById('modal-duelo');
+  const closeDuelo = document.getElementById('close-duelo');
 
   if (btnSettings && settingsMenu) {
     btnSettings.addEventListener('click', (e) => {
@@ -26,6 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnCancelLogout.addEventListener('click', () => {
       modalLogout.classList.add('hidden');
+    });
+  }
+
+  if (cardDuelo && modalDuelo && closeDuelo) {
+    cardDuelo.addEventListener('click', () => {
+      modalDuelo.classList.remove('hidden');
+    });
+
+    closeDuelo.addEventListener('click', () => {
+      modalDuelo.classList.add('hidden');
+    });
+
+    modalDuelo.addEventListener('click', (e) => {
+      if (e.target === modalDuelo) {
+        modalDuelo.classList.add('hidden');
+      }
     });
   }
 });

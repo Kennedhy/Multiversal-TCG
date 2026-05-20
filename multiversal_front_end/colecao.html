@@ -14,65 +14,83 @@
   <div id="cosmic-bg"></div>
   <div id="cosmic-trails"></div>
 
-  <nav class="navbar glass-navbar">
-    <div class="navbar-brand">
-      <img src="assets/multiversal_logo.png" alt="Logo" class="brand-logo nav-logo" onclick="location.href='home.html'" style="cursor: pointer;">
-    </div>
-    <div class="deck-stats-top">
-      <span class="label">MEU DECK:</span>
-      <span id="deck-count" class="count">0 / 60</span>
-    </div>
-    <div class="navbar-user">
-      <div class="avatar">Y</div>
-    </div>
-  </nav>
+<nav class="navbar glass-navbar">
+  <div class="navbar-brand">
+    <img src="assets/multiversal_logo.png" alt="Logo" class="brand-logo nav-logo" onclick="location.href='home.html'" style="cursor: pointer;">
+    <button class="btn-pill-nav" onclick="location.href='home.html'">Voltar</button>
+  </div>
+  <div class="deck-stats-top">
+    <span class="label">MEU DECK:</span>
+    <span id="deck-count" class="count">0 / 60</span>
+  </div>
+  <div class="navbar-user">
+    <div class="avatar">Y</div>
+  </div>
+</nav>
 
   <main class="builder-container">
-    <section class="builder-column column-pool glass-panel">
-      <div class="column-header">
-        <h2 class="column-title">COLEÇÃO</h2>
-        <div class="filters-bar">
-          <input type="text" id="search-card" placeholder="Buscar carta...">
-          <select id="filter-type">
-            <option value="all">TODOS</option>
-            <option value="monster">MONSTROS</option>
-            <option value="spell">MAGIAS</option>
-          </select>
-        </div>
+  <section class="builder-column column-pool clear-glass-panel">
+    <div class="column-header">
+      <h2 class="column-title">COLEÇÃO</h2>
+      <div class="filters-bar">
+        <input type="text" id="search-card" placeholder="Buscar carta...">
+        <select id="filter-type">
+          <option value="all">TODOS</option>
+          <option value="monster">MONSTROS</option>
+          <option value="spell">MAGIAS</option>
+        </select>
+        <select id="sort-type">
+          <option value="id">ORDENAR POR</option>
+          <option value="az">A-Z</option>
+          <option value="za">Z-A</option>
+          <option value="atk-high">MAIOR ATK</option>
+          <option value="atk-low">MENOR ATK</option>
+          <option value="def-high">MAIOR DEF</option>
+          <option value="def-low">MENOR DEF</option>
+        </select>
       </div>
-      <div class="cards-grid" id="pool-grid"></div>
-    </section>
+    </div>
+    <div class="cards-grid" id="pool-grid"></div>
+  </section>
 
-    <section class="builder-controls">
-      <button class="btn-transfer" id="move-to-deck">▶</button>
-      <button class="btn-transfer" id="move-to-pool">◀</button>
-    </section>
+  <section class="builder-controls">
+    <button class="btn-transfer" id="move-to-deck">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <button class="btn-transfer" id="move-to-pool">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    </button>
+  </section>
 
-    <section class="builder-column column-deck glass-panel">
-      <div class="column-header">
-        <h2 class="column-title">DECK ATUAL</h2>
-        <button class="btn-pill btn-save" style="padding: 10px 20px; font-size: 0.8rem;">SALVAR</button>
-      </div>
-      <div class="cards-grid" id="deck-grid"></div>
-    </section>
-  </main>
+  <section class="builder-column column-deck clear-glass-panel">
+    <div class="column-header header-deck">
+      <h2 class="column-title">DECK ATUAL</h2>
+      <button class="btn-solid btn-save">SALVAR</button>
+    </div>
+    <div class="cards-grid mini-grid" id="deck-grid"></div>
+  </section>
+</main>
 
-  <div id="card-inspector" class="inspector-overlay hidden">
-    <div class="inspector-content glass-panel">
-      <button class="btn-close-inspector">✕</button>
+<div class="inspector-overlay hidden" id="card-inspector">
+  <div class="inspector-content">
+    <button class="btn-close-inspector" id="close-inspector">✕</button>
+    <div class="inspector-navigation">
+      <button class="btn-nav-arrow" id="btn-prev-card">◀</button>
       <div class="inspector-visual">
-        <img id="inspected-img" src="" alt="">
+        <img src="" alt="" id="inspector-img">
       </div>
-      <div class="inspector-info">
-        <h2 id="inspected-name">NOME DA CARTA</h2>
-        <div class="inspected-stats">
-          <span id="inspected-type">TIPO</span>
-          <span id="inspected-atk-def">ATK/ 0000 DEF/ 0000</span>
-        </div>
-        <p id="inspected-desc">A descrição detalhada da entidade multiversal e suas habilidades aparecerá aqui for sua análise tática.</p>
+      <button class="btn-nav-arrow" id="btn-next-card">▶</button>
+    </div>
+    <div class="inspector-info">
+      <h2 id="inspector-name"></h2>
+      <div class="inspected-stats" id="inspector-stats"></div>
+      <p id="inspector-desc"></p>
+      <div class="inspector-actions">
+        <button class="btn-solid" id="btn-add-deck">Adicionar ao Deck</button>
       </div>
     </div>
   </div>
+</div>
 
   <script src="js/visuals.js"></script>
   <script src="js/colecao.js"></script>

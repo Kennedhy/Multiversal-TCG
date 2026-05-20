@@ -4,16 +4,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multiversal TCG</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-  <div class="index-container">
-    <div class="index-content">
-      <img src="assets/multiversal_logo.png" alt="Multiversal TCG Logo" class="brand-logo index-logo">
-      <button class="btn-index" onclick="location.href='home.html'">INICIAR JORNADA</button>
+  <div id="cosmic-bg"></div>
+  <div id="cosmic-trails"></div>
+
+  <nav class="landing-nav">
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="#hero">
+        <img src="assets/multiversal_logo.png" alt="Multiversal TCG Logo" class="brand-logo">
+      </a>
+    </div>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#features">Recursos</a></li>
+      </ul>
+      <div class="nav-auth">
+        <button class="btn-pill-nav" onclick="location.href='login.html'">Entrar</button>
+      </div>
     </div>
   </div>
+</nav>
+
+  <header id="hero" class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">DUELOS ÉPICOS DE CARTAS <span class="highlight">ESPERAM POR VOCÊ!</span></h1>
+      <p class="hero-desc">Torne-se o rei dos duelos no novo jogo de cartas multiversal! <br>Colete cartas, crie estratégias e derrote seus oponentes em batalhas lendárias.</p>
+      <div class="hero-actions">
+        <button class="btn-solid" onclick="location.href='home.html'">Jogar Agora</button>
+        <a href="#features">Saiba Mais</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-cards">
+        <div class="f-card c-left"> <img src="assets/Dragão_bairro_industrial.png" alt=""></div>
+        <div class="f-card c-center"> <img src="assets/Canarinho.png" alt=""> </div>
+        <div class="f-card c-right"> <img src="assets/Tremendao.png" alt=""></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features" class="split-section">
+<div class="split-visual">
+    <div class="cards-fan">
+      <div class="fan-card f1"><img src="assets/Gengar.png" alt=""></div>
+      <div class="fan-card f2"><img src="assets/Aedes_egicpio.png" alt=""></div>
+      <div class="fan-card f3"><img src="assets/Mago_negro.png" alt=""></div>
+      <div class="fan-card f4"><img src="assets/Mula.png" alt=""></div>
+      <div class="fan-card f5"><img src="assets/Diabo_rubro.png" alt=""></div>
+    </div>
+  </div>
+
+  <div class="split-text">
+    <h2>RECURSOS & <span class="highlight">MECÂNICAS</span></h2>
+    <p>Colecione entidades de diversos universos, construa seu deck e domine o multiverso com um sistema de duelo envolvente onde cada movimento conta e cada escolha pode ser a última.</p>
+    <div class="hex-grid">
+      <div class="hex-icon">⚡</div>
+      <div class="hex-icon">⚔️</div>
+      <div class="hex-icon">🛡️</div>
+      <div class="hex-icon">🔮</div>
+      <div class="hex-icon">🔥</div>
+      <div class="hex-icon">💧</div>
+    </div>
+  </div>
+  
+</section>
+
+  <section id="cta" class="cta-section">
+    <div class="cta-visual">
+      <div class="character-art">
+        <img src="assets/pngegg (7).png" alt="Character Art">
+      </div>
+    </div>
+    <div class="cta-text">
+      <h2>JUNTE-SE A NÓS,<br><span class="highlight">COMECE SUA JORNADA!</span></h2>
+      <button class="btn-solid" onclick="location.href='home.html'">Jogar Agora</button>
+    </div>
+  </section>
+
+<footer class="landing-footer">
+  <div class="footer-logo-wrapper">
+    <img src="assets/multiversal_logo.png" alt="Multiversal TCG Logo" class="footer-logo-large">
+  </div>
+  <div class="footer-credits">
+    <p>Desenvolvido por Yarllei, Kennedhy, Levi, Kauhan e Wellington.</p>
+    <p>&copy; 2026 Multiversal TCG.</p>
+  </div>
+</footer>
+
 </body>
 </html>

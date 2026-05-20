@@ -40,39 +40,71 @@
 
       <main class="home-main">
         <div class="menu-grid">
-          <div class="modern-card" id="card-quick"onclick="location.href='jogo_rapido.html'">
+          <div class="modern-card" id="card-duelo">
             <div class="card-glow"></div>
             <div class="card-content">
               <div class="card-icon-wrapper">
-                <img src="assets/yugi_2.png" alt="">
+                <img src="assets/duelo.png" alt="Duelo">
               </div>
-              <h2>Jogo Rápido</h2>
-              <p>Mergulhe em uma anomalia temporal e enfrente forças multiversais.</p>
+              <h2>DUELO</h2>
+              <p>Enfrente oponentes em batalhas épicas.</p>
             </div>
           </div>
-          
-          <div class="modern-card" id="card-standard" onclick="location.href='duelo.html'">
+
+          <div class="modern-card" id="card-loja">
             <div class="card-glow"></div>
             <div class="card-content">
               <div class="card-icon-wrapper">
-                <img src="assets/yugi.png" alt="">
+                <img src="assets/loja.png" alt="Loja">
               </div>
-              <h2>Duelo Tático</h2>
-              <p>Estabeleça sua estratégia multiversal e domine o campo de batalha.</p>
+              <h2>LOJA</h2>
+              <p>Adquira novos pacotes para tunar seu deck.</p>
             </div>
           </div>
-          
-          <div class="modern-card" id="card-deck" onclick="location.href='colecao.html'">
+
+          <div class="modern-card" onclick="location.href='colecao.html'">
             <div class="card-glow"></div>
             <div class="card-content">
               <div class="card-icon-wrapper">
-                <img src="assets/gods_cards.png" alt="">
+                <img src="assets/decks.png" alt="Montar Deck">
               </div>
-              <h2>Monte seu Deck</h2>
-              <p>Sintetize entidades cósmicas e relíquias para moldar o baralho supremo.</p>
+              <h2>MONTAR O DECK</h2>
+              <p>Gerencie sua coleção e monte sua estratégia.</p>
             </div>
           </div>
         </div>
+
+                <div class="modal-overlay hidden" id="modal-duelo">
+  <div class="modal-content">
+    <button class="btn-close-inspector" id="close-duelo">✕</button>
+    <h2 class="modal-title">ESCOLHA SEU MODO DE JOGO</h2>
+    <div class="arenas-grid">
+      
+      <div class="modern-card arena-modal-card" onclick="location.href='jogo_rapido.html'">
+        <div class="card-glow"></div>
+        <div class="card-content">
+          <div class="card-icon-wrapper">
+            <img src="assets/yugi_2.png" alt="Jogo Rápido">
+          </div>
+          <h2>JOGO RÁPIDO</h2>
+          <p>Partida casual imediata contra um oponente aleatório.</p>
+        </div>
+      </div>
+
+      <div class="modern-card arena-modal-card" onclick="location.href='duelo.html'">
+        <div class="card-glow"></div>
+        <div class="card-content">
+          <div class="card-icon-wrapper">
+            <img src="assets/yugi.png" alt="Padrão">
+          </div>
+          <h2>PADRÃO</h2>
+          <p>Duelo ranqueado seguindo as regras oficiais do multiverso.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
       </main>
     </section>
   </div>
