@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiversal - Autenticação</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card clear-glass-panel">
+      <div class="auth-header">
+        <img src="assets/multiversal_logo.png" alt="Multiversal Logo" class="auth-logo">
+        <h2 id="auth-title">ENTRAR</h2>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="tab-login">Login</button>
+        <button class="tab-btn" id="tab-register">Cadastrar</button>
+      </div>
+
+      <form id="auth-form" class="auth-form">
+        <div class="input-group">
+          <label for="username">Mestre (Usuário)</label>
+          <input type="text" id="username" name="nomeUsuario" placeholder="Digite seu nome de usuário" required autocomplete="off">
+        </div>
+        
+        <div class="input-group">
+          <label for="password">Senha Mágica</label>
+          <input type="password" id="password" name="senha" placeholder="Sua senha secreta" required>
+        </div>
+
+        <div id="auth-message" class="auth-message hidden"></div>
+
+        <button type="submit" class="btn-solid btn-full" id="btn-submit">Acessar Multiverso</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
