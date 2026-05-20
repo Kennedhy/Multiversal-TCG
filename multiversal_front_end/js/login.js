@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // =========================
-  // CONFIG API
-  // =========================
+  // =========================================
+  // CONFIGURAÇÃO API
+  // =========================================
 
   const API_BASE = 'https://noemi-goateed-lavonia.ngrok-free.dev';
 
@@ -13,12 +13,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       try {
 
         const response = await fetch(`${API_BASE}${path}`, {
+          method: options.method || 'GET',
+
           credentials: 'include',
+
           headers: {
             'Content-Type': 'application/json',
             ...(options.headers || {})
           },
-          ...options
+
+          body: options.body
         });
 
         let data = {};
@@ -36,12 +40,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       } catch (error) {
 
+        console.error(error);
+
         return {
           ok: false,
           status: 500,
           error: 'Erro de conexão com o servidor.'
         };
       }
+    }
+
+    static get(path) {
+
+      return this.request(path);
     }
 
     static post(path, body) {
@@ -51,14 +62,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         body: JSON.stringify(body)
       });
     }
-
-    static get(path) {
-
-      return this.request(path, {
-        method: 'GET'
-      });
-    }
   }
+
+  // =========================================
+  // API AUTH
+  // =========================================
 
   const Api = {
 
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       async entrar(nomeUsuario, senha) {
 
-        return ApiService.post('/entrar', {
+        return ApiService.post('/api/auth/entrar', {
           nomeUsuario,
           senha
         });
@@ -74,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       async cadastrar(nomeUsuario, senha) {
 
-        return ApiService.post('/cadastrar', {
+        return ApiService.post('/api/auth/cadastrar', {
           nomeUsuario,
           senha
         });
@@ -82,19 +90,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       async sessao() {
 
-        return ApiService.get('/sessao');
+        return ApiService.get('/api/auth/sessao');
       },
 
       async sair() {
 
-        return ApiService.post('/sair', {});
+        return ApiService.post('/api/auth/sair', {});
       }
     }
   };
 
-  // =========================
+  // =========================================
   // ELEMENTOS
-  // =========================
+  // =========================================
 
   const tabLogin = document.getElementById('tab-login');
   const tabRegister = document.getElementById('tab-register');
@@ -103,19 +111,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const authForm = document.getElementById('auth-form');
 
   const btnSubmit = document.getElementById('btn-submit');
+
   const authMessage = document.getElementById('auth-message');
 
   let isLoginMode = true;
 
-  // =========================
+  // =========================================
   // VERIFICAR SESSÃO
-  // =========================
+  // =========================================
 
   try {
 
-    const { ok } = await Api.auth.sessao();
+    const resposta = await Api.auth.sessao();
 
-    if (ok) {
+    if (resposta.ok) {
 
       window.location.replace('home.html');
       return;
@@ -126,9 +135,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Erro ao verificar sessão:', error);
   }
 
-  // =========================
-  // TROCAR MODO
-  // =========================
+  // =========================================
+  // TROCAR LOGIN/CADASTRO
+  // =========================================
 
   function switchMode(isLogin) {
 
@@ -156,9 +165,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // =========================
+  // =========================================
   // MOSTRAR MENSAGEM
-  // =========================
+  // =========================================
 
   function showMessage(msg, isError = true) {
 
@@ -175,9 +184,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
   }
 
-  // =========================
-  // EVENTOS DAS TABS
-  // =========================
+  // =========================================
+  // EVENTOS DAS ABAS
+  // =========================================
 
   tabLogin.addEventListener('click', (e) => {
 
@@ -193,9 +202,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     switchMode(false);
   });
 
-  // =========================
+  // =========================================
   // LOGIN / CADASTRO
-  // =========================
+  // =========================================
 
   authForm.addEventListener('submit', async (e) => {
 
@@ -225,6 +234,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       let resposta;
 
+      // LOGIN
       if (isLoginMode) {
 
         resposta = await Api.auth.entrar(
@@ -232,7 +242,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           senha
         );
 
-      } else {
+      }
+
+      // CADASTRO
+      else {
 
         resposta = await Api.auth.cadastrar(
           nomeUsuario,
@@ -240,6 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
       }
 
+      // ERRO
       if (!resposta.ok) {
 
         showMessage(
@@ -249,6 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
+      // SUCESSO
       showMessage(
         isLoginMode
           ? 'Acesso concedido!'
