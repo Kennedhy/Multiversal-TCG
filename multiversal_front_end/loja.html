@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiversal TCG - Loja</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/loja.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+
+<body>
+  <div id="cosmic-bg"></div>
+  <div id="cosmic-trails"></div>
+  
+  <div id="app-container">
+    <section id="screen-loja" class="screen active">
+      
+      <nav class="navbar glass-navbar">
+        <div class="navbar-brand">
+          <button class="btn-nav-back" onclick="location.href='home.html'" title="Voltar ao Menu">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          <img src="assets/multiversal_logo.png" alt="Multiversal TCG Logo" class="brand-logo nav-logo">
+        </div>
+        
+        <div class="navbar-user">
+          <div class="user-info" style="justify-content: center; align-items: center;">
+            <span class="username" style="color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); font-size: 1.25rem;">🪙 <span id="user-coins">1.500</span></span>
+          </div>
+          <div class="avatar">Y</div>
+          
+          <div class="settings-container">
+            <button class="btn-icon" id="btn-settings">⚙️</button>
+            <div class="dropdown-menu" id="settings-menu">
+              <button class="dropdown-item" id="btn-logout-trigger">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-logout" style="margin-right: 8px; vertical-align: middle;">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sair da Conta
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main class="loja-main">
+        <div class="loja-header">
+          <h1 class="loja-title">LOJA DE PACOTES</h1>
+          <p class="loja-subtitle">Adquira pacotes cósmicos e forje sua coleção multiversal</p>
+        </div>
+
+        <div class="packs-grid">
+          
+          <!-- Pacote Regional -->
+          <div class="pack-card card-regional" data-pack-id="regional" data-price="100">
+            <div class="pack-glow"></div>
+            <div class="pack-visual">
+              <div class="pack-art"><img src="assets/Mula.png" alt="Pacote Regional"></div>
+              <div class="pack-name">Pacote Regional</div>
+            </div>
+            <div class="pack-details">
+              <p class="pack-desc">Cartas baseadas na cultura regional e no fantástico folclore brasileiro.</p>
+              <div class="pack-price">
+                <span>100</span> 🪙
+              </div>
+              <button class="btn-buy">Ver Pacote</button>
+            </div>
+          </div>
+
+          <!-- Pacote Científico -->
+          <div class="pack-card card-cientifico" data-pack-id="cientifico" data-price="150">
+            <div class="pack-glow"></div>
+            <div class="pack-visual">
+              <div class="pack-art"><img src="assets/Aedes_egicpio.png" alt="Pacote Científico"></div>
+              <div class="pack-name">Pacote Científico</div>
+            </div>
+            <div class="pack-details">
+              <p class="pack-desc">Anomalias da ciência, gênios históricos e experiências laboratoriais.</p>
+              <div class="pack-price">
+                <span>150</span> 🪙
+              </div>
+              <button class="btn-buy">Ver Pacote</button>
+            </div>
+          </div>
+
+          <!-- Pacote Pokémon -->
+          <div class="pack-card card-pokemon" data-pack-id="pokemon" data-price="200">
+            <div class="pack-glow"></div>
+            <div class="pack-visual">
+              <div class="pack-art"><img src="assets/Gengar.png" alt="Pacote Pokémon"></div>
+              <div class="pack-name">Pacote Pokémon</div>
+            </div>
+            <div class="pack-details">
+              <p class="pack-desc">Criaturas famosas vindas de outra dimensão de monstros de bolso.</p>
+              <div class="pack-price">
+                <span>200</span> 🪙
+              </div>
+              <button class="btn-buy">Ver Pacote</button>
+            </div>
+          </div>
+
+          <!-- Pacote Mítico -->
+          <div class="pack-card card-mitico" data-pack-id="mitico" data-price="250">
+            <div class="pack-glow"></div>
+            <div class="pack-visual">
+              <div class="pack-art"><img src="assets/Mago_negro.png" alt="Pacote Mítico"></div>
+              <div class="pack-name">Pacote Mítico</div>
+            </div>
+            <div class="pack-details">
+              <p class="pack-desc">Magias ancestrais e dragões supremos para definir o rumo do duelo.</p>
+              <div class="pack-price">
+                <span>250</span> 🪙
+              </div>
+              <button class="btn-buy">Ver Pacote</button>
+            </div>
+          </div>
+
+          <!-- Pacote Esportivo -->
+          <div class="pack-card card-esportivo" data-pack-id="esportivo" data-price="100">
+            <div class="pack-glow"></div>
+            <div class="pack-visual">
+              <div class="pack-art"><img src="assets/Canarinho.png" alt="Pacote Esportivo"></div>
+              <div class="pack-name">Pacote Esportivo</div>
+            </div>
+            <div class="pack-details">
+              <p class="pack-desc">A força e garra entram no campo de batalha para vencer.</p>
+              <div class="pack-price">
+                <span>100</span> 🪙
+              </div>
+              <button class="btn-buy">Ver Pacote</button>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </section>
+  </div>
+
+  <!-- Modal de Detalhes do Pacote -->
+  <div id="modal-pack-details" class="modal-overlay hidden">
+    <div class="modal-content details-content">
+      <button class="btn-icon" id="btn-close-details" style="position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; z-index: 10;">✕</button>
+      <div class="details-layout">
+        <!-- Lado Esquerdo: Arte Ampliada -->
+        <div class="details-art-container">
+          <img src="" id="details-pack-img" alt="Pack Art">
+        </div>
+        
+        <!-- Lado Direito: Infos e Ações -->
+        <div class="details-info-container">
+          <h2 class="modal-title" id="details-pack-name" style="text-align: left; margin-bottom: 10px;">Nome do Pacote</h2>
+          <p class="modal-text" id="details-pack-desc" style="text-align: left; margin-bottom: 20px; flex: 1;">Lore do pacote vai aqui.</p>
+          
+          <div class="pack-price details-price">
+            <span id="details-pack-price">0</span> 🪙
+          </div>
+          
+          <button class="btn-pill btn-primary btn-giant-buy" id="btn-details-buy">COMPRAR</button>
+          
+          <div class="secondary-links">
+            <a href="#" id="btn-view-probabilities">Ver Coleção e Probabilidades</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Coleção e Probabilidades -->
+  <div id="modal-pack-probabilities" class="modal-overlay hidden">
+    <div class="modal-content probabilities-content" style="max-width: 900px; width: 90vw; padding: 2rem;">
+      <div class="modal-header" style="position: relative; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <button class="btn-icon no-spin" id="btn-back-to-details" style="font-size: 1.2rem; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Voltar
+        </button>
+        <h2 class="modal-title" style="position: absolute; left: 50%; transform: translateX(-50%); margin: 0; font-size: 1.5rem;">Coleção do Pacote</h2>
+        <button class="btn-icon" id="btn-close-probabilities" style="font-size: 1.5rem; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+      
+      <div class="probabilities-body">
+        <div class="cards-grid" id="probabilities-cards-grid">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Abertura de Booster -->
+  <div class="modal-overlay hidden" id="modal-pack-opening">
+    <div class="pack-opening-container">
+      <h2 class="opening-title">PACOTE REVELADO!</h2>
+      <p class="opening-subtitle">Clique nas cartas para revelá-las</p>
+      
+      <div class="revealed-cards-container">
+        
+        <!-- Card 1 -->
+        <div class="reveal-card-wrapper">
+          <div class="tcg-card" id="card-1">
+            <div class="card-back">
+              <div class="card-back-design">
+                <img src="assets/multiversal_logo.png" alt="Card Back Logo">
+              </div>
+            </div>
+            <div class="card-front">
+              <img src="" class="card-img" alt="Card Front">
+              <div class="card-shine"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="reveal-card-wrapper">
+          <div class="tcg-card" id="card-2">
+            <div class="card-back">
+              <div class="card-back-design">
+                <img src="assets/multiversal_logo.png" alt="Card Back Logo">
+              </div>
+            </div>
+            <div class="card-front">
+              <img src="" class="card-img" alt="Card Front">
+              <div class="card-shine"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="reveal-card-wrapper">
+          <div class="tcg-card" id="card-3">
+            <div class="card-back">
+              <div class="card-back-design">
+                <img src="assets/multiversal_logo.png" alt="Card Back Logo">
+              </div>
+            </div>
+            <div class="card-front">
+              <img src="" class="card-img" alt="Card Front">
+              <div class="card-shine"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="btn-pill btn-primary btn-close-opening hidden" id="btn-collect">Adicionar à Coleção</button>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação de Compra -->
+  <div id="modal-confirm-purchase" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Confirmar Compra</h2>
+      <p class="modal-text" id="confirm-purchase-text">Deseja realmente adquirir o pacote?</p>
+      <div class="modal-actions">
+        <button class="btn-pill btn-text" id="btn-cancel-purchase">CANCELAR</button>
+        <button class="btn-pill btn-primary" id="btn-confirm-purchase" style="box-shadow: 0 4px 15px rgba(146, 105, 250, 0.4);">CONFIRMAR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Logout -->
+  <div id="logout-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2 class="modal-title">Desconectar</h2>
+      <p class="modal-text">Deseja realmente sair da sua conta e retornar ao menu inicial?</p>
+      <div class="modal-actions">
+        <button class="btn-pill btn-text" id="btn-cancel-logout">CANCELAR</button>
+        <button class="btn-pill btn-danger" onclick="location.href='index.html'">SAIR</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/loja.js"></script>
+</body>
+</html>

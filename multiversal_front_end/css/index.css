@@ -15,7 +15,6 @@ html, body {
   color: var(--accent-color);
 }
 
-/* ================== BOTÕES (PILL FORMAT) ================== */
 .btn-solid {
   background: var(--accent-color);
   color: #fff;
@@ -167,7 +166,6 @@ html, body {
   align-items: center;
   justify-content: space-between;
   min-height: 100vh;
-  /* O calc magicamente ancora o conteúdo no max-width de 1400px */
   padding: 120px max(5vw, calc((100vw - 1400px) / 2)) 50px; 
   gap: 40px;
 }

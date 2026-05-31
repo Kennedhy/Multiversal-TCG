@@ -44,17 +44,7 @@
   box-shadow: 0 8px 20px rgba(140, 104, 250, 0.3);
 }
 
-.nav-logo {
-  height: 45px;
-  width: auto;
-  cursor: pointer;
-  filter: drop-shadow(0 0 10px rgba(140, 104, 250, 0.3));
-  transition: transform 0.3s ease;
-}
 
-.nav-logo:hover {
-  transform: scale(1.05);
-}
 
 .deck-stats-top {
   flex: 1;
@@ -242,6 +232,8 @@
   overflow: hidden;
   position: relative;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .card-item:hover {

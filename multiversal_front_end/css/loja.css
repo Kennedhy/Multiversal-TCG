@@ -1,0 +1,575 @@
+#screen-loja {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.loja-main {
+  width: 100%;
+  height: calc(100vh - 90px);
+  margin-top: 90px !important;
+  overflow-y: auto;
+  padding: 40px max(5vw, calc((100vw - 1400px) / 2)) 50px max(5vw, calc((100vw - 1400px) / 2));
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loja-main::-webkit-scrollbar {
+  width: 4px;
+}
+
+.loja-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.loja-main::-webkit-scrollbar-thumb {
+  background: rgba(140, 104, 250, 0.3);
+  border-radius: 10px;
+}
+
+.loja-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 104, 250, 0.6);
+}
+
+.loja-header {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 3rem;
+  flex-shrink: 0;
+}
+
+.loja-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: 2px;
+  margin-bottom: 0.8rem;
+  text-shadow: 0 0 20px rgba(226, 232, 240, 0.1);
+}
+
+.loja-subtitle {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+}
+
+.packs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-shrink: 0;
+  padding-bottom: 40px;
+}
+
+.pack-card {
+  position: relative;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 3px;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  min-height: 380px;
+  cursor: pointer;
+}
+
+.pack-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+}
+
+.pack-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pack-card:hover .pack-glow {
+  opacity: 0.15;
+}
+
+/* Card-Specific Theme Colors */
+.card-regional:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.card-regional .pack-glow {
+  background: radial-gradient(circle at 50% 50%, #10b981, transparent 70%);
+}
+.card-regional:hover .pack-glow {
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+}
+
+.card-cientifico:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+}
+.card-cientifico .pack-glow {
+  background: radial-gradient(circle at 50% 50%, #3b82f6, transparent 70%);
+}
+.card-cientifico:hover .pack-glow {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+}
+
+.card-pokemon:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+}
+.card-pokemon .pack-glow {
+  background: radial-gradient(circle at 50% 50%, #a855f7, transparent 70%);
+}
+.card-pokemon:hover .pack-glow {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+}
+
+.card-mitico:hover {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.card-mitico .pack-glow {
+  background: radial-gradient(circle at 50% 50%, #ef4444, transparent 70%);
+}
+.card-mitico:hover .pack-glow {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+}
+
+.card-esportivo:hover {
+  border-color: rgba(234, 179, 8, 0.4);
+}
+.card-esportivo .pack-glow {
+  background: radial-gradient(circle at 50% 50%, #eab308, transparent 70%);
+}
+.card-esportivo:hover .pack-glow {
+  box-shadow: 0 0 30px rgba(234, 179, 8, 0.15);
+}
+
+
+.pack-visual {
+  height: 160px;
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 21px 21px 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pack-art {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90px;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.1));
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.pack-art img {
+  max-width: 90px;
+  max-height: 90px;
+  object-fit: contain;
+}
+
+.pack-card:hover .pack-art {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.pack-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
+
+.pack-details {
+  border-radius: 0 0 21px 21px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
+}
+
+.pack-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.pack-price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-buy {
+  width: 100%;
+  background: rgba(140, 104, 250, 0.12);
+  border: 1px solid rgba(140, 104, 250, 0.3);
+  color: var(--primary-color);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.btn-buy:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(140, 104, 250, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-buy:active {
+  transform: translateY(0);
+}
+
+/* =========================================
+   MODAL DE DETALHES
+========================================= */
+.details-content {
+  max-width: 800px !important;
+  padding: 2rem !important;
+}
+
+.details-layout {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.details-art-container {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+#details-pack-img {
+  max-width: 100%;
+  max-height: 250px;
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.2));
+}
+
+.details-info-container {
+  flex: 1.5;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.details-price {
+  justify-content: flex-start !important;
+  font-size: 2rem !important;
+  margin-bottom: 30px !important;
+}
+
+.btn-giant-buy {
+  padding: 20px 48px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-bottom: 20px;
+  font-size: 1.3rem !important;
+}
+
+.secondary-links {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.secondary-links a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.secondary-links a:hover {
+  color: var(--primary-color);
+}
+
+/* ==========================================================================
+   MODAL DE ABERTURA DE BOOSTER
+   ========================================================================== */
+.pack-opening-container {
+  max-width: 900px;
+  width: 95%;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.opening-title {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  letter-spacing: 3px;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(140, 104, 250, 0.4);
+  margin-bottom: 0.5rem;
+}
+
+.opening-subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 3.5rem;
+}
+
+.revealed-cards-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  margin-bottom: 3.5rem;
+}
+
+.reveal-card-wrapper {
+  perspective: 1000px;
+  width: 180px;
+  aspect-ratio: 2.4 / 3.5;
+  cursor: pointer;
+  position: relative;
+}
+
+.tcg-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-style: preserve-3d;
+}
+
+.tcg-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-back, .card-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.card-back {
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid var(--accent-color);
+  box-shadow: 0 0 20px rgba(140, 104, 250, 0.25), inset 0 0 15px rgba(140, 104, 250, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reveal-card-wrapper:hover .card-back {
+  border-color: #9d7cfa;
+  box-shadow: 0 0 25px rgba(140, 104, 250, 0.5), inset 0 0 20px rgba(140, 104, 250, 0.3);
+}
+
+.card-back-design {
+  width: 70%;
+  height: auto;
+  opacity: 0.65;
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.reveal-card-wrapper:hover .card-back-design {
+  transform: scale(1.08) rotate(2deg);
+}
+
+.card-back-design img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.card-front {
+  transform: rotateY(180deg);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  position: relative;
+}
+
+.card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Efeito de Brilho Translúcido por cima da carta revelada */
+.card-shine {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.btn-close-opening {
+  min-width: 250px;
+  animation: fadeIn 0.5s ease both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .packs-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    gap: 30px;
+  }
+  .pack-card {
+    min-height: auto;
+  }
+  .revealed-cards-container {
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 2.5rem;
+  }
+  .pack-opening-container {
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2.5rem 1.5rem;
+  }
+  .opening-subtitle {
+    margin-bottom: 2rem;
+  }
+}
+
+/* ==========================================================================
+   MODAL DE PROBABILIDADES
+   ========================================================================== */
+#probabilities-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  padding-bottom: 20px;
+}
+
+#probabilities-cards-grid::-webkit-scrollbar {
+  width: 6px;
+}
+#probabilities-cards-grid::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.02);
+  border-radius: 4px;
+}
+#probabilities-cards-grid::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+.prob-card-item {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.prob-card-item:hover {
+  transform: translateY(-5px);
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.prob-card-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+}
+
+.prob-card-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prob-card-rarity {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.rarity-comum { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.rarity-raro { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.rarity-epico { background: rgba(168, 85, 247, 0.15); color: #a855f7; }
+.rarity-lendario { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.prob-card-rate {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
