@@ -24,8 +24,8 @@ Authorization: Bearer <token>
 | GET | `/api/cards/{id}` | Nao | Busca uma carta pelo ID. |
 | POST | `/api/cards` | Nao | Cria uma carta. |
 | PUT | `/api/cards/{id}` | Nao | Edita uma carta. |
-| DELETE | `/api/cards/{id}` | Nao | Exclui uma carta customizada. |
-| POST | `/api/cards/{id}/image` | Nao | Envia imagem para uma carta. |
+| DELETE | `/api/cards/{id}` | Nao | Exclui uma carta. |
+| POST | `/api/cards/{id}/image?rarity={rarity}` | Nao | Envia imagem para uma carta; `rarity` e opcional. |
 | GET | `/api/deck/default` | Nao | Busca o deck padrao. |
 | PUT | `/api/deck/default` | Nao | Atualiza o deck padrao. |
 | GET | `/api/players/{playerId}/profile` | Sim | Busca o perfil do jogador. |
