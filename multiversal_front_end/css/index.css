@@ -242,8 +242,8 @@ html, body {
 
 .f-card {
   position: absolute;
-  width: 240px;
-  height: 350px;
+  width: 180px;
+  height: 260px;
   background: transparent;
   border-radius: 12px;
   display: flex;
@@ -362,8 +362,8 @@ html, body {
 }
 
 .fan-card {
-  width: 240px;
-  height: 350px;
+  width: 180px;
+  height: 260px;
   background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
@@ -389,20 +389,20 @@ html, body {
   z-index: 10 !important;
 }
 
-.f1 { transform: translateX(-240px) rotate(-20deg) translateY(40px); z-index: 1; }
-.f1:hover { transform: translateX(-240px) rotate(-20deg) translateY(10px) scale(1.05); }
+.f1 { transform: translateX(-180px) rotate(-20deg) translateY(40px); z-index: 1; }
+.f1:hover { transform: translateX(-180px) rotate(-20deg) translateY(10px) scale(1.05); }
 
-.f2 { transform: translateX(-120px) rotate(-10deg) translateY(12px); z-index: 2; }
-.f2:hover { transform: translateX(-120px) rotate(-10deg) translateY(-15px) scale(1.05); }
+.f2 { transform: translateX(-90px) rotate(-10deg) translateY(12px); z-index: 2; }
+.f2:hover { transform: translateX(-90px) rotate(-10deg) translateY(-15px) scale(1.05); }
 
 .f3 { transform: translateX(0) rotate(0deg) scale(1.05); z-index: 3; border-color: rgba(140, 104, 250, 0.4); }
 .f3:hover { transform: translateX(0) rotate(0deg) translateY(-30px) scale(1.1); }
 
-.f4 { transform: translateX(120px) rotate(10deg) translateY(12px); z-index: 2; }
-.f4:hover { transform: translateX(120px) rotate(10deg) translateY(-15px) scale(1.05); }
+.f4 { transform: translateX(90px) rotate(10deg) translateY(12px); z-index: 2; }
+.f4:hover { transform: translateX(90px) rotate(10deg) translateY(-15px) scale(1.05); }
 
-.f5 { transform: translateX(240px) rotate(20deg) translateY(40px); z-index: 1; }
-.f5:hover { transform: translateX(240px) rotate(20deg) translateY(10px) scale(1.05); }
+.f5 { transform: translateX(180px) rotate(20deg) translateY(40px); z-index: 1; }
+.f5:hover { transform: translateX(180px) rotate(20deg) translateY(10px) scale(1.05); }
 
 .center-section h2 {
   font-family: 'Cinzel', serif;
@@ -525,4 +525,144 @@ html, body {
   font-size: 0.85rem;
   font-weight: 500;
   letter-spacing: 1px;
+}
+
+/* ================== MEDIA QUERIES (RESPONSIVIDADE) ================== */
+@media (max-width: 992px) {
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+    padding-top: 100px;
+    padding-bottom: 60px;
+    gap: 60px;
+  }
+  
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .hero-visual {
+    height: 240px;
+  }
+  
+  .floating-cards {
+    transform: scale(0.85);
+    transform-origin: center center;
+  }
+
+  .split-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 60px;
+    padding-top: 100px;
+    padding-bottom: 60px;
+  }
+  
+  .split-visual {
+    height: 280px;
+  }
+  
+  .cards-fan {
+    transform: scale(0.75);
+    transform-origin: bottom center;
+  }
+
+  .split-text {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .split-text h2 {
+    font-size: 2.5rem;
+  }
+
+  .hex-grid {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding-top: 90px;
+    padding-bottom: 100px;
+  }
+  .nav-right {
+    gap: 16px;
+  }
+  .nav-links {
+    display: none;
+  }
+  .hero-title {
+    font-size: 2.6rem;
+  }
+  .hero-desc {
+    font-size: 1.05rem;
+  }
+  .hero-visual {
+    height: 200px;
+    margin-top: 40px;
+  }
+  .floating-cards {
+    transform: scale(0.7);
+    transform-origin: center center;
+  }
+  .split-visual {
+    display: none;
+  }
+  .cards-fan {
+    transform: scale(0.55);
+    transform-origin: bottom center;
+  }
+  .hex-grid {
+    display: none;
+  }
+  .split-section {
+    padding-bottom: 80px;
+  }
+  .cta-section {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  .cta-text h2 {
+    font-size: 2.2rem;
+  }
+  .landing-footer {
+    padding-top: 60px;
+  }
+  .footer-logo-wrapper {
+    display: none;
+  }
+}
+
+/* Telas muito pequenas (Smartphones Antigos / Estreitos) */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-desc {
+    font-size: 0.95rem;
+  }
+  .hero-visual {
+    height: 180px;
+    margin-top: 50px;
+  }
+  .floating-cards {
+    transform: scale(0.6);
+  }
+  .split-section {
+    padding-bottom: 20px;
+  }
+  .cta-section {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .cta-text h2 {
+    font-size: 1.8rem;
+  }
 }

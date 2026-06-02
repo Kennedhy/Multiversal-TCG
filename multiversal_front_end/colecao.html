@@ -29,7 +29,24 @@
     <span id="deck-count" class="count">0 / 60</span>
   </div>
   <div class="navbar-user">
-    <div class="avatar">Y</div>
+    <div class="user-info">
+      <span class="username">Yarllei</span>
+      <span class="user-title">Duelista Multiversal</span>
+    </div>
+    
+    <div class="settings-container">
+      <div class="avatar" id="btn-settings">Y</div>
+      <div class="dropdown-menu" id="settings-menu">
+        <button class="dropdown-item" id="btn-logout-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-logout">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Sair da Conta
+        </button>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -93,6 +110,17 @@
       <div class="inspector-actions">
         <button class="btn-solid" id="btn-add-deck">Adicionar ao Deck</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="logout-modal" class="modal-overlay hidden">
+  <div class="modal-content">
+    <h2 class="modal-title">Desconectar</h2>
+    <p class="modal-text">Deseja realmente sair da sua conta e retornar ao menu inicial?</p>
+    <div class="modal-actions">
+      <button class="btn-pill btn-text" id="btn-cancel-logout">CANCELAR</button>
+      <button class="btn-pill btn-danger" onclick="location.href='index.html'">SAIR</button>
     </div>
   </div>
 </div>

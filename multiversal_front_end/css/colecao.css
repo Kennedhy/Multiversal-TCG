@@ -45,7 +45,6 @@
 }
 
 
-
 .deck-stats-top {
   flex: 1;
   display: flex;
@@ -200,7 +199,7 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
   gap: 8px;
   overflow-y: auto;
   padding-right: 12px;
@@ -208,7 +207,7 @@
 }
 
 .mini-grid {
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
   gap: 10px;
 }
 
@@ -460,11 +459,14 @@
   .builder-container {
     grid-template-columns: 1fr;
     height: auto;
-    padding-top: 120px;
+    padding-top: 100px;
   }
   .builder-controls {
     flex-direction: row;
     padding: 10px 0;
+  }
+  .btn-transfer svg {
+    transform: rotate(90deg); /* Faz as setas apontarem para cima/baixo em vez de lados */
   }
   .column-deck {
     height: 500px;
@@ -477,5 +479,124 @@
   .inspector-visual {
     max-width: 300px;
     margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 1rem 1.5rem;
+    gap: 15px;
+  }
+  .navbar-user .user-info {
+    display: none;
+  }
+  .deck-stats-top {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .builder-container {
+    padding-top: 130px;
+  }
+  .column-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .header-deck {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .filters-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  #search-card {
+    grid-column: 1 / 3;
+  }
+  .filters-bar input, .filters-bar select {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  .inspector-content {
+    gap: 24px;
+    padding: 30px 24px;
+  }
+  .btn-close-inspector {
+    top: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .builder-container {
+    padding: 140px 16px 20px 16px;
+  }
+  .column-title {
+    font-size: 1.2rem;
+  }
+  .filters-bar input, .filters-bar select {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+  .column-deck {
+    height: 400px;
+  }
+  .cards-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .mini-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .inspector-content {
+    padding: 24px 16px;
+    width: 95%;
+    gap: 20px;
+    border-radius: 20px;
+  }
+  .inspector-info h2 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+  .inspected-stats {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+  .inspector-info p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .inspector-visual {
+    max-width: 180px;
+  }
+  .btn-nav-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+  .btn-close-inspector {
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  .inspector-actions {
+    margin-top: 20px;
+  }
+  #btn-add-deck {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
   }
 }

@@ -203,6 +203,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // =========================================
+  // ROLAGEM AUTOMÁTICA (TECLADO MOBILE)
+  // =========================================
+  
+  const inputs = document.querySelectorAll('.input-group input');
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      // Pequeno atraso para dar tempo ao teclado virtual do celular abrir
+      setTimeout(() => {
+        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    });
+  });
+
+  // =========================================
   // LOGIN / CADASTRO
   // =========================================
 

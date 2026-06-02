@@ -214,3 +214,78 @@ body {
   color: var(--primary-color);
   transform: translateX(-5px);
 }
+
+/* ================== RESPONSIVIDADE ================== */
+@media (max-width: 768px) {
+  .clear-glass-panel {
+    padding: 40px 24px;
+    border-radius: 20px;
+  }
+  
+  .auth-logo {
+    height: 60px;
+    margin-bottom: 20px;
+  }
+  
+  .auth-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .btn-back-home {
+    top: 20px;
+    left: 20px;
+    font-size: 0.85rem;
+  }
+  
+  .btn-back-home svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .auth-container {
+    padding: 16px;
+    padding-top: 80px;
+    padding-bottom: 40px;
+    height: auto;
+    min-height: 100vh;
+    align-items: flex-start;
+  }
+
+  .clear-glass-panel {
+    padding: 32px 20px;
+    border-radius: 16px;
+  }
+  
+  .auth-logo {
+    height: 50px;
+    margin-bottom: 16px;
+  }
+  
+  .auth-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .tab-btn {
+    padding: 10px 0;
+    font-size: 0.9rem;
+  }
+  
+  .input-group input {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+  
+  .btn-solid {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+}

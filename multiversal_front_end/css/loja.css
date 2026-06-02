@@ -487,11 +487,54 @@
   .opening-subtitle {
     margin-bottom: 2rem;
   }
+  .details-layout {
+    flex-direction: column;
+  }
+  .details-art-container {
+    padding: 1rem;
+  }
 }
 
 /* ==========================================================================
    MODAL DE PROBABILIDADES
    ========================================================================== */
+.probabilities-content {
+  max-width: 900px !important;
+  width: 90vw !important;
+  padding: 2rem !important;
+}
+
+.probabilities-content .modal-header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.probabilities-content .modal-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.probabilities-content .btn-icon {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+}
+
+.probabilities-content .btn-icon:hover {
+  color: var(--primary-color);
+}
+
 #probabilities-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -499,7 +542,9 @@
   max-height: 50vh;
   overflow-y: auto;
   padding-right: 10px;
-  padding-bottom: 20px;
+  padding-bottom: 60px; /* Extra padding so last item clears the fade */
+  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
 #probabilities-cards-grid::-webkit-scrollbar {
@@ -572,4 +617,113 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   font-weight: 600;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .packs-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    gap: 30px;
+  }
+  .pack-card {
+    min-height: auto;
+  }
+  .revealed-cards-container {
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 2.5rem;
+  }
+  .pack-opening-container {
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2.5rem 1.5rem;
+  }
+  .opening-subtitle {
+    margin-bottom: 2rem;
+  }
+  .details-layout {
+    flex-direction: column;
+  }
+  .details-art-container {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+  .loja-main {
+    padding-top: 20px;
+  }
+  .loja-title {
+    font-size: 2.2rem;
+  }
+  .opening-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loja-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+  .loja-subtitle {
+    font-size: 0.9rem;
+    padding: 0 10px;
+  }
+  .packs-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .pack-card {
+    min-height: 320px;
+  }
+  .pack-visual {
+    height: 120px;
+  }
+  .pack-art img {
+    max-width: 75px;
+    max-height: 75px;
+  }
+  .pack-name {
+    font-size: 1.1rem;
+  }
+  .pack-price {
+    font-size: 1.2rem;
+  }
+  .details-content {
+    padding: 1.5rem !important;
+    width: 95%;
+  }
+  #details-pack-img {
+    max-height: 180px;
+  }
+  .btn-giant-buy {
+    padding: 16px 24px !important;
+    font-size: 1.1rem !important;
+  }
+  #probabilities-cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+  .prob-card-item {
+    padding: 10px;
+  }
+  .prob-card-img {
+    width: 60px;
+    height: 60px;
+  }
+  .prob-card-name {
+    font-size: 0.75rem;
+    height: 30px;
+  }
+  .hide-mobile-text {
+    display: none;
+  }
+  .probabilities-content .modal-title {
+    font-size: 1.25rem;
+  }
 }
