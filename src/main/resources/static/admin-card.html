@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Carta | Admin Multiversal TCG</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <p class="eyebrow">Admin</p>
+            <h1 id="pageTitle">Nova carta</h1>
+        </div>
+        <nav class="nav-actions" aria-label="Admin">
+            <a class="button secondary" href="/admin.html">Biblioteca</a>
+            <a class="button" href="/admin-card.html">Nova carta</a>
+        </nav>
+    </header>
+
+    <main class="container layout-form">
+        <form id="cardForm" class="panel">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">Cadastro</p>
+                    <h2>Dados da carta</h2>
+                </div>
+                <span class="badge" id="modeBadge">Criando</span>
+            </div>
+
+            <section class="grid two" aria-label="Dados basicos">
+                <label>
+                    Nome
+                    <input id="nome" required maxlength="120" placeholder="Ex: Guerreiro Solar">
+                </label>
+                <div class="readonly">
+                    <span>ID automatico</span>
+                    <strong id="idPreview">Sera gerado ao salvar</strong>
+                </div>
+                <label>
+                    Tipo da carta
+                    <select id="cardType" required></select>
+                </label>
+                <label>
+                    Universo
+                    <input id="universo" maxlength="80" placeholder="Pokemon, Digimon...">
+                </label>
+            </section>
+
+            <label>
+                Descricao
+                <textarea id="descricao" rows="3" maxlength="1000" placeholder="Explique o efeito ou historia da carta"></textarea>
+            </label>
+
+            <div class="grid two">
+                <label class="check">
+                    <input id="active" type="checkbox" checked>
+                    Carta ativa
+                </label>
+                <div class="readonly">
+                    <span>Raridade principal</span>
+                    <strong id="primaryRarityPreview">COMUM</strong>
+                </div>
+            </div>
+
+            <section class="panel" aria-labelledby="raritiesTitle">
+                <h3 id="raritiesTitle">Estilos por raridade</h3>
+                <p class="muted">Marque uma ou mais raridades. A primeira marcada vira a raridade principal.</p>
+                <div id="raritiesList" class="chips"></div>
+            </section>
+
+            <section class="panel" aria-labelledby="imagesTitle">
+                <h3 id="imagesTitle">Artes por raridade</h3>
+                <p class="muted">Cada raridade marcada pode ter uma imagem propria.</p>
+                <div id="rarityImagesList" class="rarity-images"></div>
+                <div class="grid three">
+                    <label>
+                        Raridade do upload
+                        <select id="imageRarity"></select>
+                    </label>
+                    <label>
+                        Arquivo
+                        <input id="imageFile" type="file" accept="image/png,image/jpeg,image/webp">
+                    </label>
+                    <label class="field-label">
+                        Enviar
+                        <button class="secondary" id="uploadButton" type="button" disabled data-locked="true">Enviar imagem</button>
+                    </label>
+                </div>
+            </section>
+
+            <section id="monsterSection" class="panel">
+                <h3>Monstro</h3>
+                <div class="grid three">
+                    <label>
+                        Tipo
+                        <select id="tipo"></select>
+                    </label>
+                    <label>
+                        ATK
+                        <input id="atk" type="number" min="0" step="1" value="0">
+                    </label>
+                    <label>
+                        DEF
+                        <input id="def" type="number" min="0" step="1" value="0">
+                    </label>
+                </div>
+                <label>
+                    Evolui para
+                    <select id="evolucaoId"></select>
+                </label>
+                <div class="section-title">
+                    <h3>Ataques</h3>
+                    <button class="secondary small" id="addAttackButton" type="button">Adicionar ataque</button>
+                </div>
+                <div id="attacksList" class="repeat-list"></div>
+            </section>
+
+            <section id="effectSection" class="panel">
+                <h3>Efeito simples</h3>
+                <div class="grid three">
+                    <label>
+                        Efeito
+                        <select id="efeito"></select>
+                    </label>
+                    <label id="triggerField">
+                        Trigger da armadilha
+                        <select id="trigger"></select>
+                    </label>
+                    <label>
+                        Tipo alvo
+                        <select id="tipoAlvo"></select>
+                    </label>
+                    <label>
+                        Custo aura
+                        <input id="custoAura" type="number" min="0" step="1" value="0">
+                    </label>
+                    <label>
+                        Valor
+                        <input id="valor" type="number" step="1" value="0">
+                    </label>
+                    <label>
+                        Duracao
+                        <input id="duracao" type="number" step="1" value="0">
+                    </label>
+                </div>
+            </section>
+
+            <section id="evolutionSection" class="panel">
+                <h3>Evolucao</h3>
+                <div class="grid two">
+                    <label>
+                        Monstro base
+                        <select id="baseMonsterId"></select>
+                    </label>
+                    <label>
+                        Monstro evoluido
+                        <select id="evolvedMonsterId"></select>
+                    </label>
+                </div>
+            </section>
+
+            <details class="panel advanced">
+                <summary>Campos avancados</summary>
+                <div class="advanced-content">
+                    <label>
+                        Regras declarativas (JSON)
+                        <textarea id="regrasJson" rows="8" placeholder='[{"trigger":"AO_JOGAR","target":"NONE","actions":[]}]'></textarea>
+                    </label>
+                    <p class="muted">Use esta area apenas para efeitos que nao cabem nos campos simples.</p>
+                </div>
+            </details>
+
+            <div class="actions">
+                <button class="danger" id="deleteButton" type="button" disabled data-locked="true">Excluir</button>
+                <button type="submit">Salvar carta</button>
+                <a class="button secondary" href="/admin.html">Cancelar</a>
+            </div>
+        </form>
+
+        <aside class="panel">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">Preview</p>
+                    <h2>Visual da carta</h2>
+                </div>
+            </div>
+            <article class="card-preview">
+                <img id="previewImage" alt="" src="">
+                <div class="preview-body">
+                    <span id="previewType">MONSTRO</span>
+                    <h2 id="previewName">Nova carta</h2>
+                    <p id="previewDescription">Preencha o formulario para visualizar.</p>
+                    <div class="meta-line">
+                        <span id="previewAtk">ATK 0</span>
+                        <span id="previewDef">DEF 0</span>
+                    </div>
+                </div>
+            </article>
+        </aside>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/js/admin/card-form.js"></script>
+</body>
+</html>

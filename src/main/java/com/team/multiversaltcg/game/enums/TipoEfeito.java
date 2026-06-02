@@ -1,0 +1,22 @@
+package com.team.multiversaltcg.game.enums;
+
+public enum TipoEfeito {
+    AURA,
+    CURAR_LIDER,
+    BUFF_ATK,
+    BUFF_DEF,
+    PRESSAO_ALVO,
+    CANCELAR_ATAQUE,
+    BOOST_ATK_TIPO,
+    SHIELD_PRESSAO,
+    CURA_STATUS,
+    DRAW_CARTAS,
+    IGNORAR_DEFESA,
+    IMUNIDADE_STATUS,
+    BOOST_AURA_FARM,
+    BUSCA_DECK,
+    EVOLUCAO_GRATIS,
+    BARREIRA_TIPO,
+    JULGAMENTO,
+    ESPELHO_MAGICO
+}
