@@ -3,39 +3,32 @@ package com.team.multiversaltcg.game.enums;
 public enum LiderEnum {
 
     MAO(
-            "Mao Tse-Tung",
-            "Monstros em Modo Farm geram +2 Aura extra.",
-            "Todos os monstros atacam e farmam ao mesmo tempo neste turno."
+            "Pikachu",
+            "Monstros em Modo Farm geram +2 Aura extra."
     ),
     KIM(
-            "Kim Jong-un",
-            "Modo Defesa que bloquear causa 8 HP direto ao Lider inimigo.",
-            "Forca todos os inimigos a usar Modo Defesa no proximo turno."
+            "Garurumon",
+            "Bloqueios em Modo Defesa causam 8 HP direto ao Lider inimigo, e armadilhas de Pressao ficam mais fortes."
     ),
     STALIN(
-            "J. Stalin",
-            "Modo Defesa concede +40 DEF em vez de +25.",
-            "Escolhe 1 monstro inimigo e prende em Modo Defesa por 2 turnos."
+            "Zagueiro Muro",
+            "Modo Defesa concede +40 DEF em vez de +25, e inimigos em Farm recebem +1 Pressao."
     ),
     NAPOLEON(
-            "Napoleao",
-            "Se os 3 monstros atacarem no mesmo turno: +15 ATK para todos.",
-            "Cada monstro seu ataca 2 vezes neste turno."
+            "O Rei",
+            "Se os 3 monstros atacarem no mesmo turno, todos recebem +15 ATK nesse combate."
     ),
     GENGHIS(
-            "Gengis Khan",
-            "Cada choque vencido aplica +1 Pressao extra no defensor.",
-            "Todos os monstros atacam todos os 3 inimigos por 50% do ATK (9 choques)."
+            "Mago Negro",
+            "Cada choque vencido aplica +1 Pressao extra no defensor."
     );
 
     private final String nome;
     private final String passiva;
-    private final String especial;
 
-    LiderEnum(String nome, String passiva, String especial) {
+    LiderEnum(String nome, String passiva) {
         this.nome = nome;
         this.passiva = passiva;
-        this.especial = especial;
     }
 
     public String getNome() {
@@ -44,9 +37,5 @@ public enum LiderEnum {
 
     public String getPassiva() {
         return passiva;
-    }
-
-    public String getEspecial() {
-        return especial;
     }
 }

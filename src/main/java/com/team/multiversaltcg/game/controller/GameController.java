@@ -96,21 +96,6 @@ public class GameController {
         return ResponseEntity.ok(EstadoJogoDTO.from(campo, log));
     }
 
-    @PostMapping("/especial/{roomId}")
-    public ResponseEntity<EstadoJogoDTO> ativarEspecial(
-            @PathVariable String roomId) {
-
-        if (!sessionManager.sessaoExiste(roomId)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        sessionManager.ativarEspecial(roomId);
-        CampoBatalha campo = sessionManager.getEstado(roomId);
-        List<String> log = sessionManager.getLog(roomId);
-
-        return ResponseEntity.ok(EstadoJogoDTO.from(campo, log));
-    }
-
     @ExceptionHandler(RegraInvalidaException.class)
     public ResponseEntity<Map<String, String>> regraInvalida(RegraInvalidaException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

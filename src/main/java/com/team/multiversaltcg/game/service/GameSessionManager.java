@@ -43,10 +43,6 @@ public class GameSessionManager {
         return log;
     }
 
-    public void ativarEspecial(String roomId) {
-        getSessao(roomId).ativarEspecial();
-    }
-
     public CampoBatalha getEstado(String roomId) {
         return getSessao(roomId).getCampo();
     }

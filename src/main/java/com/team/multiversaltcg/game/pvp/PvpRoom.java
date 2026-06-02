@@ -26,8 +26,6 @@ public class PvpRoom {
     private GameService gameService;
     private TurnoJogador creatorPendingTurn;
     private TurnoJogador guestPendingTurn;
-    private boolean creatorSpecialPending;
-    private boolean guestSpecialPending;
 
     @Builder.Default
     private List<String> lastLog = new ArrayList<>();

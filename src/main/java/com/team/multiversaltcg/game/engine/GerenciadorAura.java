@@ -84,20 +84,4 @@ public class GerenciadorAura {
         return campo.gastarAura(jogador, custo);
     }
 
-    public void aplicarFarmMaoTudoAtacaEFarma(CampoBatalha campo) {
-        aplicarFarmMaoTudoAtacaEFarma(campo, true);
-    }
-
-    public void aplicarFarmMaoTudoAtacaEFarma(CampoBatalha campo, boolean jogador) {
-        MonstroInstancia[] slots = jogador ? campo.getSlotsJogador() : campo.getSlotsInimigo();
-        for (MonstroInstancia monstro : slots) {
-            if (monstro == null) continue;
-            int auraGerada = monstro.getTipo().getAuraFarm() + 2;
-            if (campo.getMagiaAtiva(jogador) != null
-                    && "campo_sagrado".equals(campo.getMagiaAtiva(jogador).getId())) {
-                auraGerada += 1;
-            }
-            campo.adicionarAura(jogador, auraGerada);
-        }
-    }
 }

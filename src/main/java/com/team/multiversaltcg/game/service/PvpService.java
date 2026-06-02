@@ -108,38 +108,16 @@ public class PvpService {
                 List<String> log = room.getGameService().processarTurnoPvp(
                         room.getCreatorPendingTurn(),
                         room.getGuestPendingTurn(),
-                        creatorFirst,
-                        room.isCreatorSpecialPending(),
-                        room.isGuestSpecialPending());
+                        creatorFirst);
                 room.setLastLog(log);
                 room.setCreatorPendingTurn(null);
                 room.setGuestPendingTurn(null);
-                room.setCreatorSpecialPending(false);
-                room.setGuestSpecialPending(false);
                 if (room.getGameService().getCampo().isJogoEncerrado()) {
                     room.setStatus(PvpRoomStatus.FINISHED);
                 }
             } else {
                 room.setLastLog(List.of("Aguardando o outro jogador finalizar o turno."));
             }
-        }
-        publish(room);
-        return stateFor(room, normalize(username));
-    }
-
-    public PvpStateResponse markSpecial(String username, String code) {
-        PvpRoom room = getRoomForPlayer(username, code);
-        synchronized (room) {
-            if (room.getStatus() != PvpRoomStatus.IN_PROGRESS) {
-                throw new RegraInvalidaException("Partida PvP ainda nao esta em andamento.");
-            }
-            PvpSide side = room.sideOf(normalize(username));
-            if (side == PvpSide.CREATOR) {
-                room.setCreatorSpecialPending(true);
-            } else {
-                room.setGuestSpecialPending(true);
-            }
-            room.setLastLog(List.of("Especial preparado para o proximo turno resolvido."));
         }
         publish(room);
         return stateFor(room, normalize(username));

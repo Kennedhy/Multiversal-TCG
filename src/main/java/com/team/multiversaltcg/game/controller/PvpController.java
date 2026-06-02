@@ -71,11 +71,6 @@ public class PvpController {
         return pvpService.submitTurn(username(authentication), code, turnoDTO.toTurnoJogador());
     }
 
-    @PostMapping("/rooms/{code}/special")
-    public PvpStateResponse special(@PathVariable String code, Authentication authentication) {
-        return pvpService.markSpecial(username(authentication), code);
-    }
-
     @ExceptionHandler(RegraInvalidaException.class)
     public ResponseEntity<Map<String, String>> regraInvalida(RegraInvalidaException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

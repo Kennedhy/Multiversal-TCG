@@ -89,15 +89,10 @@ public class MotorDeJogo {
         gerenciadorAura.aplicarAuraBase(campo);
         log("+3 Aura base para ambos.");
 
-        if (campo.getLiderJogador().isMaoEspecialAtivo()) {
-            gerenciadorAura.aplicarFarmMaoTudoAtacaEFarma(campo);
-            log("Especial Mao: monstros farmam e atacam neste turno.");
-        } else {
-            gerenciadorAura.resolverFarmJogador(campo);
-        }
+        gerenciadorAura.resolverFarmJogador(campo);
         gerenciadorAura.resolverFarmInimigo(campo);
-        gerenciadorLider.aplicarPassivaGulag(campo, true);
-        gerenciadorLider.aplicarPassivaGulag(campo, false);
+        gerenciadorLider.aplicarPassivaPressaoFarm(campo, true);
+        gerenciadorLider.aplicarPassivaPressaoFarm(campo, false);
 
         gerenciadorMagia.resolverContinuos(campo, logTurno);
         processarKO();
@@ -118,8 +113,6 @@ public class MotorDeJogo {
 
         campo.setFaseAtual(FaseEnum.FIM_TURNO);
         gerenciadorLider.decrementarModosPresos(campo);
-        campo.getLiderJogador().limparFlagsEspeciais();
-        campo.getLiderInimigo().limparFlagsEspeciais();
 
         campo.setTurnoAtual(campo.getTurnoAtual() + 1);
         comprarParaProximoTurno();
@@ -131,9 +124,7 @@ public class MotorDeJogo {
 
     public List<String> processarTurnoPvp(TurnoJogador turnoJogador,
                                           TurnoJogador turnoInimigo,
-                                          boolean jogadorPrimeiro,
-                                          boolean especialJogador,
-                                          boolean especialInimigo) {
+                                          boolean jogadorPrimeiro) {
         logTurno = new ArrayList<>();
         jogadorEvoluiuNoTurno = false;
         inimigoEvoluiuNoTurno = false;
@@ -141,9 +132,6 @@ public class MotorDeJogo {
 
         TurnoJogador jogador = turnoJogador == null ? new TurnoJogador() : turnoJogador;
         TurnoJogador inimigo = turnoInimigo == null ? new TurnoJogador() : turnoInimigo;
-
-        if (especialJogador) ativarEspecial(true);
-        if (especialInimigo) ativarEspecial(false);
 
         campo.setFaseAtual(FaseEnum.ATRIBUICAO);
         processarAtribuicaoPvp(jogadorPrimeiro, jogador, inimigo);
@@ -159,20 +147,10 @@ public class MotorDeJogo {
         gerenciadorAura.aplicarAuraBase(campo);
         log("+3 Aura base para ambos.");
 
-        if (campo.getLiderJogador().isMaoEspecialAtivo()) {
-            gerenciadorAura.aplicarFarmMaoTudoAtacaEFarma(campo);
-            log("Especial Mao: monstros do Jogador farmam e atacam neste turno.");
-        } else {
-            gerenciadorAura.resolverFarmJogador(campo);
-        }
-        if (campo.getLiderInimigo().isMaoEspecialAtivo()) {
-            gerenciadorAura.aplicarFarmMaoTudoAtacaEFarma(campo, false);
-            log("Especial Mao: monstros do Inimigo farmam e atacam neste turno.");
-        } else {
-            gerenciadorAura.resolverFarmInimigo(campo);
-        }
-        gerenciadorLider.aplicarPassivaGulag(campo, true);
-        gerenciadorLider.aplicarPassivaGulag(campo, false);
+        gerenciadorAura.resolverFarmJogador(campo);
+        gerenciadorAura.resolverFarmInimigo(campo);
+        gerenciadorLider.aplicarPassivaPressaoFarm(campo, true);
+        gerenciadorLider.aplicarPassivaPressaoFarm(campo, false);
 
         gerenciadorMagia.resolverContinuos(campo, logTurno);
         processarKO();
@@ -200,8 +178,6 @@ public class MotorDeJogo {
 
         campo.setFaseAtual(FaseEnum.FIM_TURNO);
         gerenciadorLider.decrementarModosPresos(campo);
-        campo.getLiderJogador().limparFlagsEspeciais();
-        campo.getLiderInimigo().limparFlagsEspeciais();
 
         campo.setTurnoAtual(campo.getTurnoAtual() + 1);
         comprarParaProximoTurno();
@@ -388,33 +364,28 @@ public class MotorDeJogo {
     private void aplicarBonusLiderEAtacar(List<AcaoTurno> acoes, boolean jogador, boolean estrito) {
         Lider lider = jogador ? campo.getLiderJogador() : campo.getLiderInimigo();
         MonstroInstancia[] slots = jogador ? campo.getSlotsJogador() : campo.getSlotsInimigo();
-        boolean napoleonBonus = lider.getTipo() == LiderEnum.NAPOLEON
-                && gerenciadorLider.verificarNapoleonBonus(campo, jogador);
-        if (napoleonBonus) {
+        boolean bonusOfensivoRei = lider.getTipo() == LiderEnum.NAPOLEON
+                && gerenciadorLider.verificarBonusOfensivoRei(campo, jogador);
+        if (bonusOfensivoRei) {
             for (MonstroInstancia m : slots) if (m != null) m.setAtkBuff(m.getAtkBuff() + 15);
-            log("Formacao Ofensiva de Napoleao: monstros de " + rotulo(jogador) + " recebem +15 ATK.");
+            log("Formacao do Rei: monstros de " + rotulo(jogador) + " recebem +15 ATK.");
         }
-        if (lider.isGenghisAtacarTodos()) {
-            resolverAtaquesGenghis(acoes, jogador, estrito);
-        } else {
-            resolverAtaques(acoes, jogador, lider.isNapoleonAtacarDuasVezes(), estrito);
-        }
-        if (napoleonBonus) {
+        resolverAtaques(acoes, jogador, false, estrito);
+        if (bonusOfensivoRei) {
             for (MonstroInstancia m : slots) if (m != null) m.setAtkBuff(m.getAtkBuff() - 15);
         }
     }
 
     private void resolverAtaques(List<AcaoTurno> acoes, boolean jogador, boolean duasVezes, boolean estrito) {
         MonstroInstancia[] slots = jogador ? campo.getSlotsJogador() : campo.getSlotsInimigo();
-        Lider lider = jogador ? campo.getLiderJogador() : campo.getLiderInimigo();
         for (AcaoTurno acao : acoes) {
             if (!acao.isAtaque()) continue;
             MonstroInstancia m = slots[validarSlot(acao.getSlotOrigem(), "atacante")];
-            if (m != null && !lider.isMaoEspecialAtivo() && m.getModoAtual() != ModoAcao.ATAQUE) continue;
+            if (m != null && m.getModoAtual() != ModoAcao.ATAQUE) continue;
             executarAtaque(acao, jogador, estrito);
             if (campo.isJogoEncerrado()) return;
             if (duasVezes) {
-                log("Napoleao: ataque duplo.");
+                log("Ataque duplo.");
                 executarAtaque(acao, jogador, estrito);
                 if (campo.isJogoEncerrado()) return;
             }
@@ -581,26 +552,6 @@ public class MotorDeJogo {
         }
     }
 
-    private void resolverAtaquesGenghis(List<AcaoTurno> acoes, boolean jogador, boolean estrito) {
-        log("Horda Mongol: cada monstro ataca todos os inimigos.");
-        for (AcaoTurno acao : acoes) {
-            if (!acao.isAtaque()) continue;
-            MonstroInstancia[] inimigos = jogador ? campo.getSlotsInimigo() : campo.getSlotsJogador();
-            for (int i = 0; i < 3; i++) {
-                MonstroInstancia defensor = inimigos[i];
-                if (defensor == null) continue;
-                AcaoTurno horda = AcaoTurno.builder()
-                        .slotOrigem(acao.getSlotOrigem())
-                        .modo(ModoAcao.ATAQUE)
-                        .indiceAtaque(acao.getIndiceAtaque())
-                        .slotAlvo(i)
-                        .build();
-                executarAtaque(horda, jogador, estrito);
-                if (campo.isJogoEncerrado()) return;
-            }
-        }
-    }
-
     private void pressionarOutroInimigo(MonstroInstancia[] inimigos, MonstroInstancia defensor, int quantidade) {
         for (MonstroInstancia m : inimigos) {
             if (m != null && m != defensor) {
@@ -659,16 +610,6 @@ public class MotorDeJogo {
     private int validarSlot(int slot, String campoNome) {
         if (slot < 0 || slot > 2) throw new RegraInvalidaException("Indice invalido para " + campoNome + ": " + slot);
         return slot;
-    }
-
-    public void ativarEspecial(boolean jogador) {
-        Lider lider = jogador ? campo.getLiderJogador() : campo.getLiderInimigo();
-        if (!lider.podeUsarEspecial()) {
-            log("Especial de " + lider.getTipo().getNome() + " ja foi usado.");
-            return;
-        }
-        gerenciadorLider.ativarEspecial(campo, jogador);
-        log("Especial de " + lider.getTipo().getNome() + " ativado.");
     }
 
     public CampoBatalha getCampo() {

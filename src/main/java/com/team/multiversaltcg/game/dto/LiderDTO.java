@@ -12,9 +12,7 @@ public class LiderDTO {
     private String nome;
     private int hp;
     private int hpMaximo;
-    private boolean especialDisponivel;
     private String passiva;
-    private String especial;
 
     public static LiderDTO from(Lider lider) {
         return LiderDTO.builder()
@@ -22,9 +20,7 @@ public class LiderDTO {
                 .nome(lider.getTipo().getNome())
                 .hp(lider.getHp())
                 .hpMaximo(lider.getHpMaximo())
-                .especialDisponivel(lider.podeUsarEspecial())
                 .passiva(lider.getTipo().getPassiva())
-                .especial(lider.getTipo().getEspecial())
                 .build();
     }
 }

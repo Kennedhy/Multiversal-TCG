@@ -98,26 +98,14 @@ public class GameService {
 
     public List<String> processarTurnoPvp(TurnoJogador turnoJogador,
                                           TurnoJogador turnoInimigo,
-                                          boolean jogadorPrimeiro,
-                                          boolean especialJogador,
-                                          boolean especialInimigo) {
+                                          boolean jogadorPrimeiro) {
         if (campo == null) {
             throw new RegraInvalidaException("Partida nao iniciada.");
         }
         if (campo.isJogoEncerrado()) {
             throw new PartidaEncerradaException("Partida ja encerrada.");
         }
-        return motor.processarTurnoPvp(turnoJogador, turnoInimigo, jogadorPrimeiro, especialJogador, especialInimigo);
-    }
-
-    public void ativarEspecial() {
-        if (campo == null) {
-            throw new RegraInvalidaException("Partida nao iniciada.");
-        }
-        if (campo.isJogoEncerrado()) {
-            throw new PartidaEncerradaException("Partida ja encerrada.");
-        }
-        motor.ativarEspecial(true);
+        return motor.processarTurnoPvp(turnoJogador, turnoInimigo, jogadorPrimeiro);
     }
 
     public CampoBatalha getCampo() {
