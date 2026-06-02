@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // CONFIGURAÇÃO API
   // =========================================
 
-  const API_BASE = 'https://noemi-goateed-lavonia.ngrok-free.dev';
+  const API_BASE = 'http://localhost:8080';
+  const TOKEN_KEY = 'multiversal_token';
+  const USER_KEY = 'multiversal_user';
 
   class ApiService {
 
@@ -12,13 +14,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
 
+        const token = localStorage.getItem(TOKEN_KEY);
         const response = await fetch(`${API_BASE}${path}`, {
           method: options.method || 'GET',
 
-          credentials: 'include',
-
           headers: {
             'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...(options.headers || {})
           },
 
@@ -74,28 +76,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       async entrar(nomeUsuario, senha) {
 
-        return ApiService.post('/api/auth/entrar', {
-          nomeUsuario,
-          senha
+        return ApiService.post('/api/auth/login', {
+          username: nomeUsuario,
+          password: senha
         });
       },
 
       async cadastrar(nomeUsuario, senha) {
 
-        return ApiService.post('/api/auth/cadastrar', {
-          nomeUsuario,
-          senha
+        return ApiService.post('/api/auth/register', {
+          username: nomeUsuario,
+          password: senha
         });
       },
 
       async sessao() {
 
-        return ApiService.get('/api/auth/sessao');
+        return ApiService.get('/api/auth/me');
       },
 
       async sair() {
 
-        return ApiService.post('/api/auth/sair', {});
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        return { ok: true };
       }
     }
   };
@@ -276,6 +280,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         return;
       }
+
+      localStorage.setItem(TOKEN_KEY, resposta.data.token || '');
+      localStorage.setItem(USER_KEY, resposta.data.username || nomeUsuario.toLowerCase());
 
       // SUCESSO
       showMessage(

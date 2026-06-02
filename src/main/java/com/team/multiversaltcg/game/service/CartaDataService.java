@@ -35,14 +35,7 @@ public class CartaDataService {
 
     private static final String SOURCE_BASE = "BASE";
     private static final String SOURCE_CUSTOM = "CUSTOM";
-    private static final List<String> DEFAULT_DECK_IDS = List.of(
-            "charizard", "pikachu", "squirtle", "bulbasaur", "agumon", "garurumon",
-            "magonegro", "dragao", "zagueiro", "pontaveloz", "orei", "patamon",
-            "evoluir_raichu", "evoluir_blastoise", "evoluir_greymon", "evoluir_wargreymon", "evoluir_angemon",
-            "boost_chama", "escudo_abissal", "cura_natureza", "tempestade",
-            "portal_sombras", "luz_eterna", "campo_sagrado", "nexo_digital",
-            "contra_ataque", "armadilha_explosiva", "barreira_tipo", "julgamento", "espelho_magico"
-    );
+    private static final List<String> DEFAULT_DECK_IDS = List.of();
 
     private final Map<String, Carta> cartas = new HashMap<>();
     private final CardDefinitionRepository repository;
@@ -111,13 +104,7 @@ public class CartaDataService {
     }
 
     private Map<String, Carta> construirCartasBase() {
-        Map<String, Carta> base = new HashMap<>();
-        carregarMonstros(base);
-        carregarEvolucoes(base);
-        carregarMagias(base);
-        carregarArmadilhas(base);
-        carregarAliasesLegados(base);
-        return base;
+        return new HashMap<>();
     }
 
     private void carregarMonstros(Map<String, Carta> destino) {
@@ -293,22 +280,19 @@ public class CartaDataService {
     }
 
     public List<Carta> getMonstrosPadrao() {
-        return ids(List.of("charizard", "pikachu", "squirtle", "bulbasaur", "agumon", "garurumon",
-                "magonegro", "dragao", "zagueiro", "pontaveloz", "orei", "patamon"));
+        return List.of();
     }
 
     public List<Carta> getMagiasPadrao() {
-        return ids(List.of("boost_chama", "escudo_abissal", "cura_natureza", "tempestade",
-                "portal_sombras", "luz_eterna", "campo_sagrado", "nexo_digital"));
+        return List.of();
     }
 
     public List<Carta> getArmadilhasPadrao() {
-        return ids(List.of("contra_ataque", "armadilha_explosiva", "barreira_tipo", "julgamento", "espelho_magico"));
+        return List.of();
     }
 
     public List<Carta> getEvolucoesPadrao() {
-        return ids(List.of("evoluir_raichu", "evoluir_blastoise", "evoluir_greymon",
-                "evoluir_wargreymon", "evoluir_angemon"));
+        return List.of();
     }
 
     public List<Carta> getDeckPadrao() {
