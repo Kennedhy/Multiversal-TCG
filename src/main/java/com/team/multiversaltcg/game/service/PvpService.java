@@ -29,14 +29,17 @@ public class PvpService {
     private final Map<String, PvpRoom> rooms = new ConcurrentHashMap<>();
     private final PlayerDeckService playerDeckService;
     private final CartaDataService cartaDataService;
+    private final MatchHistoryService matchHistoryService;
     private final SimpMessagingTemplate messagingTemplate;
     private final SecureRandom random = new SecureRandom();
 
     public PvpService(PlayerDeckService playerDeckService,
                       CartaDataService cartaDataService,
+                      MatchHistoryService matchHistoryService,
                       SimpMessagingTemplate messagingTemplate) {
         this.playerDeckService = playerDeckService;
         this.cartaDataService = cartaDataService;
+        this.matchHistoryService = matchHistoryService;
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -115,6 +118,7 @@ public class PvpService {
                 room.setGuestPendingTurn(null);
                 if (room.getGameService().getCampo().isJogoEncerrado()) {
                     room.setStatus(PvpRoomStatus.FINISHED);
+                    recordResultIfNeeded(room);
                 }
             } else {
                 room.setLastLog(List.of("Aguardando o outro jogador finalizar o turno."));
@@ -200,6 +204,29 @@ public class PvpService {
     private void sendTo(PvpRoom room, String username) {
         if (username == null || username.isBlank()) return;
         messagingTemplate.convertAndSendToUser(username, "/queue/pvp/" + room.getCode(), stateFor(room, username));
+    }
+
+    private void recordResultIfNeeded(PvpRoom room) {
+        if (room.isResultRecorded()
+                || room.getGuestId() == null
+                || room.getGameService() == null
+                || room.getGameService().getCampo() == null) {
+            return;
+        }
+        String winnerId = winnerId(room.getGameService().getCampo().getVencedor(), room);
+        matchHistoryService.recordPvpResult(
+                room.getCode(),
+                room.getCreatorId(),
+                room.getGuestId(),
+                winnerId,
+                room.getGameService().getCampo().getTurnoAtual());
+        room.setResultRecorded(true);
+    }
+
+    private String winnerId(String vencedorCampo, PvpRoom room) {
+        if ("JOGADOR".equals(vencedorCampo)) return room.getCreatorId();
+        if ("INIMIGO".equals(vencedorCampo)) return room.getGuestId();
+        return null;
     }
 
     private String newCode() {

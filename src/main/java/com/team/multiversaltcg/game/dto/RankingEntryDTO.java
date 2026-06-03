@@ -4,40 +4,32 @@ import com.team.multiversaltcg.game.players.PlayerProfile;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
-public class PlayerProfileDTO {
+public class RankingEntryDTO {
 
+    private int position;
     private String playerId;
-    private int coins;
-    private boolean initialBonusGranted;
     private int rankingPoints;
     private int matchesPlayed;
     private int wins;
     private int losses;
     private int draws;
     private double winRate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public static PlayerProfileDTO from(PlayerProfile profile) {
+    public static RankingEntryDTO from(PlayerProfile profile, int position) {
         double winRate = profile.getMatchesPlayed() == 0
                 ? 0.0
                 : (profile.getWins() * 100.0) / profile.getMatchesPlayed();
-        return PlayerProfileDTO.builder()
+        return RankingEntryDTO.builder()
+                .position(position)
                 .playerId(profile.getPlayerId())
-                .coins(profile.getCoins())
-                .initialBonusGranted(profile.isInitialBonusGranted())
                 .rankingPoints(profile.getRankingPoints())
                 .matchesPlayed(profile.getMatchesPlayed())
                 .wins(profile.getWins())
                 .losses(profile.getLosses())
                 .draws(profile.getDraws())
                 .winRate(Math.round(winRate * 10.0) / 10.0)
-                .createdAt(profile.getCreatedAt())
-                .updatedAt(profile.getUpdatedAt())
                 .build();
     }
 }

@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/ws/**",
                                 "/api/game/**",
+                                "/api/ranking",
                                 "/api/cards/**",
                                 "/api/packs/**",
                                 "/api/deck/**",
