@@ -68,7 +68,7 @@ public class GerenciadorChoque {
         int danoLiderBloqueio = 0;
         if (resultado == ResultadoChoqueEnum.DERROTA
                 && defensorEmDefesa
-                && liderDefensor.getTipo() == LiderEnum.KIM) {
+                && liderDefensor.getTipo() == LiderEnum.TAI) {
             danoLiderBloqueio = 8;
         }
 
@@ -107,7 +107,7 @@ public class GerenciadorChoque {
     }
 
     private int calcularPressaoVitoria(Lider liderAtacante) {
-        if (liderAtacante.getTipo() == LiderEnum.GENGHIS) return 2;
+        if (liderAtacante.getTipo() == LiderEnum.YUGI) return 2;
         return 1;
     }
 

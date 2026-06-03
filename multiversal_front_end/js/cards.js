@@ -33,11 +33,11 @@ const PLAYER_DECK=['charmander','charmander','pikachu','agumon','garurumon','mag
 const ENEMY_DECK=['squirtle','squirtle','bulbasaur','dragao','garurumon','pikachu','agumon','orei','pocao','pocao','pocaomax','elixir','escudo','antidoto','contraataque','explosiva','barreira','chamas','veneno','caos'];
 
 const LEADERS=[
-  {id:'mao',name:'Pikachu',icon:'P',pass:'Monstros em Modo Farm geram +2 Aura extra.'},
-  {id:'kim',name:'Garurumon',icon:'G',pass:'Bloqueios em Modo Defesa causam 8 HP ao Lider inimigo, e armadilhas de Pressao ficam mais fortes.'},
-  {id:'stalin',name:'Zagueiro Muro',icon:'Z',pass:'Modo Defesa concede +40 DEF em vez de +25, e inimigos em Farm recebem +1 Pressao.'},
-  {id:'napoleon',name:'O Rei',icon:'R',pass:'Se os 3 monstros atacarem no mesmo turno, todos recebem +15 ATK nesse combate.'},
-  {id:'genghis',name:'Mago Negro',icon:'M',pass:'Cada choque vencido aplica +1 Pressao extra no defensor.'},
+  {id:'ash',name:'Ash Ketchum',icon:'A',pass:'Monstros em Modo Farm geram +2 Aura extra.'},
+  {id:'tai',name:'Tai Kamiya',icon:'T',pass:'Bloqueios em Modo Defesa causam 8 HP ao Lider inimigo, e armadilhas de Pressao ficam mais fortes.'},
+  {id:'pele',name:'Pele',icon:'P',pass:'Modo Defesa concede +40 DEF em vez de +25, e inimigos em Farm recebem +1 Pressao.'},
+  {id:'canarinho',name:'Canarinho Pistola',icon:'C',pass:'Se os 3 monstros atacarem no mesmo turno, todos recebem +15 ATK nesse combate.'},
+  {id:'yugi',name:'Yugi Muto',icon:'Y',pass:'Cada choque vencido aplica +1 Pressao extra no defensor.'},
 ];
 
 const STANCES={assault:{n:'Assalto',icon:'⚔️',atk:20,def:-15},guard:{n:'Guarda',icon:'🛡️',atk:-15,def:20},balance:{n:'Equilíbrio',icon:'⚖️',atk:0,def:0}};

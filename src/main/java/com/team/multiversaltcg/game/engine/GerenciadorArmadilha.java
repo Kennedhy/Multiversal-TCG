@@ -47,7 +47,7 @@ public class GerenciadorArmadilha {
                 EfeitoTrigger.AO_ARMADILHA_DISPARAR, jogadorDefende, null, atacante, null, null, log);
 
         if ("contra_ataque".equals(armadilha.getId())) {
-            int pressao = getLider(campo, jogadorDefende).getTipo() == LiderEnum.KIM ? 2 : 1;
+            int pressao = getLider(campo, jogadorDefende).getTipo() == LiderEnum.TAI ? 2 : 1;
             atacante.adicionarPressao(pressao);
         } else if (armadilha.getEfeito() == TipoEfeito.PRESSAO_ALVO) {
             atacante.adicionarPressao(armadilha.getValor());
@@ -67,7 +67,7 @@ public class GerenciadorArmadilha {
         }
 
         descartar(campo, jogadorDonoArmadilha, armadilha);
-        int pressao = getLider(campo, jogadorDonoArmadilha).getTipo() == LiderEnum.KIM ? 2 : armadilha.getValor();
+        int pressao = getLider(campo, jogadorDonoArmadilha).getTipo() == LiderEnum.TAI ? 2 : armadilha.getValor();
         if (armadilha.getEfeito() == TipoEfeito.PRESSAO_ALVO || "armadilha_explosiva".equals(armadilha.getId())) {
             invocado.adicionarPressao(Math.max(1, pressao));
         }

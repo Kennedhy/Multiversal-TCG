@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GerenciadorLider {
 
-    public boolean verificarBonusOfensivoRei(CampoBatalha campo, boolean jogador) {
+    public boolean verificarBonusOfensivoCanarinho(CampoBatalha campo, boolean jogador) {
         MonstroInstancia[] slots = jogador
                 ? campo.getSlotsJogador()
                 : campo.getSlotsInimigo();
@@ -21,13 +21,13 @@ public class GerenciadorLider {
         return true;
     }
 
-    public void aplicarPassivaPressaoFarm(CampoBatalha campo, boolean jogadorComZagueiro) {
-        Lider lider = jogadorComZagueiro
+    public void aplicarPassivaPressaoFarm(CampoBatalha campo, boolean jogadorComPele) {
+        Lider lider = jogadorComPele
                 ? campo.getLiderJogador()
                 : campo.getLiderInimigo();
-        if (lider.getTipo() != LiderEnum.STALIN) return;
+        if (lider.getTipo() != LiderEnum.PELE) return;
 
-        MonstroInstancia[] slotsInimigos = jogadorComZagueiro
+        MonstroInstancia[] slotsInimigos = jogadorComPele
                 ? campo.getSlotsInimigo()
                 : campo.getSlotsJogador();
 

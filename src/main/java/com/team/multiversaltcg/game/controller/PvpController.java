@@ -41,7 +41,7 @@ public class PvpController {
         return pvpService.createRoom(
                 username(authentication),
                 body.get("deckId"),
-                body.getOrDefault("liderId", "MAO"),
+                body.getOrDefault("liderId", "ASH"),
                 inviteUrl(request, codePlaceholder));
     }
 
@@ -54,7 +54,7 @@ public class PvpController {
                 username(authentication),
                 code,
                 body.get("deckId"),
-                body.getOrDefault("liderId", "MAO"),
+                body.getOrDefault("liderId", "ASH"),
                 inviteUrl(request, code));
     }
 

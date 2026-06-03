@@ -364,14 +364,14 @@ public class MotorDeJogo {
     private void aplicarBonusLiderEAtacar(List<AcaoTurno> acoes, boolean jogador, boolean estrito) {
         Lider lider = jogador ? campo.getLiderJogador() : campo.getLiderInimigo();
         MonstroInstancia[] slots = jogador ? campo.getSlotsJogador() : campo.getSlotsInimigo();
-        boolean bonusOfensivoRei = lider.getTipo() == LiderEnum.NAPOLEON
-                && gerenciadorLider.verificarBonusOfensivoRei(campo, jogador);
-        if (bonusOfensivoRei) {
+        boolean bonusOfensivoCanarinho = lider.getTipo() == LiderEnum.CANARINHO
+                && gerenciadorLider.verificarBonusOfensivoCanarinho(campo, jogador);
+        if (bonusOfensivoCanarinho) {
             for (MonstroInstancia m : slots) if (m != null) m.setAtkBuff(m.getAtkBuff() + 15);
-            log("Formacao do Rei: monstros de " + rotulo(jogador) + " recebem +15 ATK.");
+            log("Formacao Canarinho: monstros de " + rotulo(jogador) + " recebem +15 ATK.");
         }
         resolverAtaques(acoes, jogador, false, estrito);
-        if (bonusOfensivoRei) {
+        if (bonusOfensivoCanarinho) {
             for (MonstroInstancia m : slots) if (m != null) m.setAtkBuff(m.getAtkBuff() - 15);
         }
     }

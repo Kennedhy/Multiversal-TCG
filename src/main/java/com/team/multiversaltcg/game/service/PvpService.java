@@ -4,6 +4,7 @@ import com.team.multiversaltcg.game.dto.EstadoJogoDTO;
 import com.team.multiversaltcg.game.dto.PvpRoomResponse;
 import com.team.multiversaltcg.game.dto.PvpRoomViewDTO;
 import com.team.multiversaltcg.game.dto.PvpStateResponse;
+import com.team.multiversaltcg.game.enums.LiderEnum;
 import com.team.multiversaltcg.game.model.Carta;
 import com.team.multiversaltcg.game.model.RegraInvalidaException;
 import com.team.multiversaltcg.game.model.TurnoJogador;
@@ -226,6 +227,11 @@ public class PvpService {
     }
 
     private String normalizeLeader(String liderId) {
-        return liderId == null || liderId.isBlank() ? "MAO" : liderId.trim().toUpperCase(Locale.ROOT);
+        LiderEnum lider = LiderEnum.fromId(
+                liderId == null || liderId.isBlank() ? LiderEnum.defaultId() : liderId);
+        if (lider == null) {
+            throw new RegraInvalidaException("Lider invalido: " + liderId);
+        }
+        return lider.name();
     }
 }

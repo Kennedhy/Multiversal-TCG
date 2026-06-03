@@ -12,7 +12,6 @@ import com.team.multiversaltcg.game.model.TurnoJogador;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class GameService {
@@ -35,7 +34,7 @@ public class GameService {
         LiderEnum tipoLider = parseLider(liderIdJogador);
 
         Lider liderJogador = Lider.criar(tipoLider);
-        Lider liderInimigo = Lider.criar(LiderEnum.GENGHIS);
+        Lider liderInimigo = Lider.criar(LiderEnum.YUGI);
 
         campo = CampoBatalha.criar(liderJogador, liderInimigo);
         campo.getDeckJogador().addAll(deckJogadorCustom == null ? cartaDataService.getDeckPadrao() : deckJogadorCustom);
@@ -79,11 +78,11 @@ public class GameService {
         if (liderIdJogador == null || liderIdJogador.isBlank()) {
             throw new RegraInvalidaException("Lider e obrigatorio.");
         }
-        try {
-            return LiderEnum.valueOf(liderIdJogador.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ex) {
+        LiderEnum lider = LiderEnum.fromId(liderIdJogador);
+        if (lider == null) {
             throw new RegraInvalidaException("Lider invalido: " + liderIdJogador);
         }
+        return lider;
     }
 
     public List<String> processarTurno(TurnoJogador turno) {

@@ -27,6 +27,6 @@ public class Lider {
     }
 
     public int getBonusDef() {
-        return tipo == LiderEnum.STALIN ? 40 : 25;
+        return tipo == LiderEnum.PELE ? 40 : 25;
     }
 }

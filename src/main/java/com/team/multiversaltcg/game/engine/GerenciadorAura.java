@@ -38,7 +38,7 @@ public class GerenciadorAura {
 
             int auraGerada = monstro.getTipo().getAuraFarm();
 
-            if (lider.getTipo() == LiderEnum.MAO) {
+            if (lider.getTipo() == LiderEnum.ASH) {
                 auraGerada += 2;
             }
             if (campo.getMagiaAtiva(jogador) != null
