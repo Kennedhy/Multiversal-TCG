@@ -9,7 +9,6 @@ import {
     formatEnum,
     imageForRarity,
     numberValue,
-    parseJsonArray,
     setBusy,
     showToast,
     slugPreview,
@@ -43,7 +42,6 @@ const fields = {
     duracao: $("#duracao"),
     baseMonsterId: $("#baseMonsterId"),
     evolvedMonsterId: $("#evolvedMonsterId"),
-    regrasJson: $("#regrasJson"),
     primaryRarityPreview: $("#primaryRarityPreview"),
     imageRarity: $("#imageRarity"),
     imageFile: $("#imageFile"),
@@ -149,7 +147,6 @@ function resetForCreate() {
     fields.duracao.value = 0;
     fields.baseMonsterId.value = "";
     fields.evolvedMonsterId.value = "";
-    fields.regrasJson.value = "";
     lists.attacks.innerHTML = "";
     addAttackRow();
     renderRarityChips(["COMUM"]);
@@ -178,7 +175,6 @@ function loadCard(card) {
     fields.custoAura.value = card.custoAura || 0;
     fields.valor.value = card.valor || 0;
     fields.duracao.value = card.duracao || 0;
-    fields.regrasJson.value = card.regras && card.regras.length ? JSON.stringify(card.regras, null, 2) : "";
 
     refreshMonsterSelects(card);
     fields.evolucaoId.value = card.evolucaoId || "";
@@ -309,7 +305,6 @@ function buildPayload() {
     const type = fields.cardType.value;
     const rarities = readRarities();
     const rarityImageUrls = readRarityImages();
-    const regras = parseJsonArray(fields.regrasJson.value, "Regras declarativas");
 
     return {
         id: state.id || "",
@@ -334,7 +329,7 @@ function buildPayload() {
         baseMonsterId: fields.baseMonsterId.value,
         evolvedMonsterId: fields.evolvedMonsterId.value,
         ataques: type === "MONSTRO" ? readAttacks() : [],
-        regras,
+        regras: state.currentCard && state.currentCard.regras ? state.currentCard.regras : [],
         active: fields.active.checked,
         deckCopies: state.currentCard ? state.currentCard.deckCopies || 0 : 0,
     };

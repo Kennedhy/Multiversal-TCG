@@ -373,17 +373,6 @@ button:disabled {
     grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.advanced summary {
-    cursor: pointer;
-    font-weight: 900;
-}
-
-.advanced-content {
-    display: grid;
-    gap: 14px;
-    margin-top: 14px;
-}
-
 .card-preview {
     background: #241913;
     border-radius: 8px;
