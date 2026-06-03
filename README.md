@@ -26,12 +26,17 @@ Authorization: Bearer <token>
 | PUT | `/api/cards/{id}` | Nao | Edita uma carta. |
 | DELETE | `/api/cards/{id}` | Nao | Exclui uma carta. |
 | POST | `/api/cards/{id}/image?rarity={rarity}` | Nao | Envia imagem para uma carta; `rarity` e opcional. |
+| GET | `/api/packs` | Nao | Lista os pacotes cadastrados. |
+| GET | `/api/packs/{id}` | Nao | Busca um pacote pelo ID. |
+| POST | `/api/packs` | Nao | Cria um pacote. |
+| PUT | `/api/packs/{id}` | Nao | Edita um pacote. |
+| DELETE | `/api/packs/{id}` | Nao | Exclui um pacote. |
 | GET | `/api/deck/default` | Nao | Busca o deck padrao. |
 | PUT | `/api/deck/default` | Nao | Atualiza o deck padrao. |
 | GET | `/api/players/{playerId}/profile` | Sim | Busca o perfil do jogador. |
 | GET | `/api/players/{playerId}/collection` | Sim | Lista a colecao do jogador. |
 | GET | `/api/players/{playerId}/shop` | Sim | Mostra a loja do jogador. |
-| POST | `/api/players/{playerId}/packs/buy` | Sim | Compra e abre um pacote. |
+| POST | `/api/players/{playerId}/packs/{packId}/buy` | Sim | Compra e abre um pacote especifico. |
 | GET | `/api/players/{playerId}/packs/history` | Sim | Lista pacotes ja abertos. |
 | GET | `/api/players/{playerId}/decks` | Sim | Lista os decks do jogador. |
 | GET | `/api/players/{playerId}/decks/{deckId}` | Sim | Busca um deck especifico. |

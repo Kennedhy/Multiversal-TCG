@@ -38,6 +38,19 @@ export const api = {
     deleteCard: (id) => request(`/api/cards/${encodeURIComponent(id)}`, {
         method: "DELETE",
     }),
+    packs: () => request("/api/packs"),
+    pack: (id) => request(`/api/packs/${encodeURIComponent(id)}`),
+    createPack: (payload) => request("/api/packs", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    }),
+    updatePack: (id, payload) => request(`/api/packs/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+    }),
+    deletePack: (id) => request(`/api/packs/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+    }),
     uploadImage: (id, rarity, file) => {
         const formData = new FormData();
         formData.append("file", file);

@@ -13,26 +13,31 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "pack_openings")
+@Table(name = "pack_definitions")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PackOpening {
+public class PackDefinition {
 
     @Id
     private String id;
 
     @Column(nullable = false)
-    private String playerId;
+    private String nome;
 
-    private String packId;
-    private String packName;
+    @Column(length = 1000)
+    private String descricao;
+
+    private String imageUrl;
     private int cost;
+    private int cardsPerPack;
+    private boolean active;
 
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String cardsJson;
+    private String cardIdsJson;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

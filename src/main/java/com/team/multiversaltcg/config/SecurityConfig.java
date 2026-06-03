@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/ws/**",
                                 "/api/game/**",
                                 "/api/cards/**",
+                                "/api/packs/**",
                                 "/api/deck/**",
                                 "/",
                                 "/*.html",

@@ -1,17 +1,22 @@
 package com.team.multiversaltcg;
 
 import com.team.multiversaltcg.game.enums.CardType;
+import com.team.multiversaltcg.game.enums.CardRarity;
 import com.team.multiversaltcg.game.enums.EfeitoAcaoTipo;
 import com.team.multiversaltcg.game.enums.EfeitoAlvo;
 import com.team.multiversaltcg.game.enums.EfeitoTrigger;
 import com.team.multiversaltcg.game.enums.ModoAcao;
 import com.team.multiversaltcg.game.enums.StatusEnum;
+import com.team.multiversaltcg.game.enums.TipoEfeito;
+import com.team.multiversaltcg.game.enums.TipoUniversal;
+import com.team.multiversaltcg.game.enums.TriggerArmadilha;
 import com.team.multiversaltcg.game.engine.GerenciadorEvolucao;
 import com.team.multiversaltcg.game.engine.GerenciadorMagia;
 import com.team.multiversaltcg.game.engine.GerenciadorCompra;
 import com.team.multiversaltcg.game.engine.GerenciadorStatus;
 import com.team.multiversaltcg.game.model.AcaoTurno;
 import com.team.multiversaltcg.game.model.AcaoEfeitoTurno;
+import com.team.multiversaltcg.game.model.Ataque;
 import com.team.multiversaltcg.game.model.CampoBatalha;
 import com.team.multiversaltcg.game.model.Carta;
 import com.team.multiversaltcg.game.model.EfeitoAcaoDeclarativa;
@@ -24,14 +29,17 @@ import com.team.multiversaltcg.game.service.CartaDataService;
 import com.team.multiversaltcg.game.service.GameService;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GameServiceEffectTests {
 
-    private final CartaDataService cartas = new CartaDataService();
+    private final CartaDataService cartas = new TestCartaDataService();
 
     @Test
     void magiaGeraAuraEVaiParaDescarte() {
@@ -274,6 +282,91 @@ class GameServiceEffectTests {
             campo.getSlotsInimigo()[i] = null;
             campo.getZonasEfeitoJogador()[i] = null;
             campo.getZonasEfeitoInimigo()[i] = null;
+        }
+    }
+
+    private static class TestCartaDataService extends CartaDataService {
+
+        private final Map<String, Carta> cards = new HashMap<>();
+
+        TestCartaDataService() {
+            add(monstro("charizard", "Charizard", 90, 45, null));
+            add(monstro("pikachu", "Pikachu", 70, 28, "raichu"));
+            add(monstro("raichu", "Raichu", 92, 48, null));
+            add(Carta.builder()
+                    .id("evoluir_raichu")
+                    .nome("Pedra Trovao")
+                    .cardType(CardType.EVOLUCAO)
+                    .baseMonsterId("pikachu")
+                    .evolvedMonsterId("raichu")
+                    .imageUrl("/images/cards/test/evoluir_raichu.png")
+                    .build());
+            add(magia("fonte_aura", "Fonte de Aura", TipoEfeito.AURA, 0, 4, 0));
+            add(magia("forja_atk", "Forja de Ataque", TipoEfeito.BUFF_ATK, 2, 20, 0));
+            add(magia("campo_sagrado", "Campo Sagrado", TipoEfeito.BOOST_AURA_FARM, 0, 1, -1));
+            add(magia("nexo_digital", "Nexo Digital", TipoEfeito.BUSCA_DECK, 0, 1, 3));
+            add(Carta.builder()
+                    .id("buraco_instavel")
+                    .nome("Buraco Instavel")
+                    .cardType(CardType.ARMADILHA)
+                    .trigger(TriggerArmadilha.AMBOS)
+                    .efeito(TipoEfeito.PRESSAO_ALVO)
+                    .valor(1)
+                    .imageUrl("/images/cards/test/buraco_instavel.png")
+                    .build());
+        }
+
+        @Override
+        public Carta getById(String id) {
+            Carta card = cards.get(id);
+            return card == null ? null : card.copy();
+        }
+
+        @Override
+        public List<Carta> getDeckPadrao() {
+            List<Carta> deck = new ArrayList<>();
+            for (int i = 0; i < 30; i++) {
+                deck.add(getById("charizard"));
+            }
+            return deck;
+        }
+
+        private void add(Carta carta) {
+            cards.put(carta.getId(), carta);
+        }
+
+        private Carta monstro(String id, String nome, int atk, int def, String evolucaoId) {
+            return Carta.builder()
+                    .id(id)
+                    .nome(nome)
+                    .cardType(CardType.MONSTRO)
+                    .rarity(CardRarity.COMUM)
+                    .tipo(TipoUniversal.CHAMA)
+                    .universo("Teste")
+                    .atk(atk)
+                    .def(def)
+                    .evolucaoId(evolucaoId)
+                    .imageUrl("/images/cards/test/" + id + ".png")
+                    .ataques(List.of(Ataque.builder()
+                            .nome("Ataque Teste")
+                            .custoAura(0)
+                            .bonusAtk(0)
+                            .build()))
+                    .build();
+        }
+
+        private Carta magia(String id, String nome, TipoEfeito efeito, int custoAura, int valor, int duracao) {
+            return Carta.builder()
+                    .id(id)
+                    .nome(nome)
+                    .cardType(CardType.MAGIA)
+                    .efeito(efeito)
+                    .custoAura(custoAura)
+                    .valor(valor)
+                    .duracao(duracao)
+                    .turnosRestantes(duracao)
+                    .imageUrl("/images/cards/test/" + id + ".png")
+                    .build();
         }
     }
 }

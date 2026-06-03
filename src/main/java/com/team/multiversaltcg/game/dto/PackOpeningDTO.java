@@ -12,6 +12,8 @@ public class PackOpeningDTO {
 
     private String id;
     private String playerId;
+    private String packId;
+    private String packName;
     private int cost;
     private int coinsRemaining;
     private LocalDateTime createdAt;

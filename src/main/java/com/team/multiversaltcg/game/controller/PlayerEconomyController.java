@@ -44,10 +44,12 @@ public class PlayerEconomyController {
         return packService.getShop(owner);
     }
 
-    @PostMapping("/packs/buy")
-    public PackOpeningDTO buyPack(@PathVariable String playerId, Authentication authentication) {
+    @PostMapping("/packs/{packId}/buy")
+    public PackOpeningDTO buyPack(@PathVariable String playerId,
+                                  @PathVariable String packId,
+                                  Authentication authentication) {
         String owner = authenticatedOwner(playerId, authentication);
-        return packService.buyPack(owner);
+        return packService.buyPack(owner, packId);
     }
 
     @GetMapping("/packs/history")

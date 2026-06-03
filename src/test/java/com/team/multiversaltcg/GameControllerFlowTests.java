@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.team.multiversaltcg.game.service.PlayerCollectionService;
 import com.team.multiversaltcg.modules.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -44,6 +45,14 @@ class GameControllerFlowTests {
 
     @Autowired
     private PlayerCollectionService playerCollectionService;
+
+    @BeforeEach
+    void garantirCartasBaseDoTeste() throws Exception {
+        criarMonstroTeste("charizard", "Charizard", 30);
+        criarMonstroTeste("pikachu", "Pikachu", 0);
+        criarMonstroTeste("raichu", "Raichu", 0);
+        criarArmadilhaTeste("contra_ataque", "Contra-Ataque");
+    }
 
     @Test
     void authRegistroLoginEMeFuncionamComJwt() throws Exception {
@@ -143,17 +152,24 @@ class GameControllerFlowTests {
     void lojaPacotesEColecaoFuncionamComJwt() throws Exception {
         String username = "user_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         String token = registrarUsuario(username, "senha123");
+        String packId = "pack_" + UUID.randomUUID().toString().replace("-", "");
+        criarPacoteTeste(packId, "Pacote Teste", true, 100, 5, "charizard");
 
         mockMvc.perform(get("/api/players/{playerId}/shop", username)
                         .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.coins").value(1000))
-                .andExpect(jsonPath("$.packCost").value(100))
-                .andExpect(jsonPath("$.cardsPerPack").value(5));
+                .andExpect(jsonPath("$.packs[?(@.id == '%s')]".formatted(packId)).exists())
+                .andExpect(jsonPath("$.odds.COMUM").value(55));
 
         mockMvc.perform(post("/api/players/{playerId}/packs/buy", username)
                         .header("Authorization", bearer(token)))
+                .andExpect(status().isNotFound());
+
+        mockMvc.perform(post("/api/players/{playerId}/packs/{packId}/buy", username, packId)
+                        .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.packId").value(packId))
                 .andExpect(jsonPath("$.cards").isArray())
                 .andExpect(jsonPath("$.cards.length()").value(5))
                 .andExpect(jsonPath("$.coinsRemaining").value(900));
@@ -167,7 +183,36 @@ class GameControllerFlowTests {
         mockMvc.perform(get("/api/players/{playerId}/packs/history", username)
                         .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].packId").value(packId))
                 .andExpect(jsonPath("$[0].cards.length()").value(5));
+    }
+
+    @Test
+    void compraPacoteValidaStatusPoolEMoedas() throws Exception {
+        String username = "user_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
+        String token = registrarUsuario(username, "senha123");
+        String inactivePack = "pack_inativo_" + UUID.randomUUID().toString().replace("-", "");
+        String emptyPack = "pack_vazio_" + UUID.randomUUID().toString().replace("-", "");
+        String expensivePack = "pack_caro_" + UUID.randomUUID().toString().replace("-", "");
+
+        criarPacoteTeste(inactivePack, "Pacote Inativo", false, 0, 1, "charizard");
+        criarPacoteTeste(emptyPack, "Pacote Vazio", true, 0, 1);
+        criarPacoteTeste(expensivePack, "Pacote Caro", true, 1500, 1, "charizard");
+
+        mockMvc.perform(post("/api/players/{playerId}/packs/{packId}/buy", username, inactivePack)
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("Pacote inativo")));
+
+        mockMvc.perform(post("/api/players/{playerId}/packs/{packId}/buy", username, emptyPack)
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("cartas ativas")));
+
+        mockMvc.perform(post("/api/players/{playerId}/packs/{packId}/buy", username, expensivePack)
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("Moedas insuficientes")));
     }
 
     @Test
@@ -319,7 +364,7 @@ class GameControllerFlowTests {
     }
 
     @Test
-    void catalogoPersistenteExpoeSeedEDeckPadrao() throws Exception {
+    void catalogoPersistenteExpoeCartasCriadasEDeckPadrao() throws Exception {
         mockMvc.perform(get("/api/cards"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.id == 'charizard')]").exists());
@@ -648,6 +693,78 @@ class GameControllerFlowTests {
                 .getResponse()
                 .getContentAsString();
         return objectMapper.readTree(response).get("token").asText();
+    }
+
+    private void criarMonstroTeste(String id, String nome, int deckCopies) throws Exception {
+        mockMvc.perform(post("/api/cards")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "%s",
+                                  "nome": "%s",
+                                  "descricao": "Carta de teste.",
+                                  "cardType": "MONSTRO",
+                                  "rarity": "COMUM",
+                                  "rarities": ["COMUM", "RARO"],
+                                  "tipo": "CHAMA",
+                                  "universo": "Teste",
+                                  "atk": 60,
+                                  "def": 40,
+                                  "active": true,
+                                  "deckCopies": %d,
+                                  "imageUrl": "/images/cards/test/%s.png",
+                                  "ataques": [
+                                    { "nome": "Ataque Teste", "custoAura": 0, "bonusAtk": 0 }
+                                  ],
+                                  "regras": []
+                                }
+                                """.formatted(id, nome, deckCopies, id)))
+                .andExpect(status().isOk());
+    }
+
+    private void criarArmadilhaTeste(String id, String nome) throws Exception {
+        mockMvc.perform(post("/api/cards")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "%s",
+                                  "nome": "%s",
+                                  "descricao": "Armadilha de teste.",
+                                  "cardType": "ARMADILHA",
+                                  "rarity": "COMUM",
+                                  "rarities": ["COMUM"],
+                                  "efeito": "CANCELAR_ATAQUE",
+                                  "trigger": "INIMIGO_ATACA",
+                                  "active": true,
+                                  "deckCopies": 0,
+                                  "imageUrl": "/images/cards/test/%s.png",
+                                  "ataques": [],
+                                  "regras": []
+                                }
+                                """.formatted(id, nome, id)))
+                .andExpect(status().isOk());
+    }
+
+    private void criarPacoteTeste(String id, String nome, boolean active, int cost, int cardsPerPack, String... cardIds) throws Exception {
+        ArrayNode ids = objectMapper.createArrayNode();
+        for (String cardId : cardIds) {
+            ids.add(cardId);
+        }
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("id", id);
+        payload.put("nome", nome);
+        payload.put("descricao", "Pacote de teste.");
+        payload.put("imageUrl", "/images/cards/test/" + id + ".png");
+        payload.put("cost", cost);
+        payload.put("cardsPerPack", cardsPerPack);
+        payload.put("active", active);
+        payload.set("cardIds", ids);
+
+        mockMvc.perform(post("/api/packs")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id));
     }
 
     private String criarDeckCharizard(String playerId, String token, String name) throws Exception {
