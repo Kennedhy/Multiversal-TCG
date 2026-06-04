@@ -17,7 +17,7 @@ public class GerenciadorCompra {
     }
 
     public Carta comprarTurno(CampoBatalha campo, boolean jogador, List<String> log) {
-        return comprar(campo, jogador, log, true);
+        return comprar(campo, jogador, log, false);
     }
 
     public Carta comprar(CampoBatalha campo, boolean jogador, List<String> log, boolean derrotaSeVazio) {

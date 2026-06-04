@@ -157,7 +157,7 @@ public class CampoBatalha {
         } else {
             magiaAtivaInimigo = carta;
         }
-        sincronizarZonasLegadas(jogador);
+        sincronizarZonasEfeito(jogador);
     }
 
     public Carta getArmadilhaAtiva(boolean jogador) {
@@ -170,7 +170,7 @@ public class CampoBatalha {
         } else {
             armadilhaAtivaInimigo = carta;
         }
-        sincronizarZonasLegadas(jogador);
+        sincronizarZonasEfeito(jogador);
     }
 
     public boolean temArmadilhaAtiva(boolean jogador) {
@@ -181,7 +181,7 @@ public class CampoBatalha {
         return getMagiaAtiva(jogador) != null;
     }
 
-    public void sincronizarZonasLegadas(boolean jogador) {
+    public void sincronizarZonasEfeito(boolean jogador) {
         ZonaEfeito[] zonas = getZonasEfeito(jogador);
         zonas[0] = getMagiaAtiva(jogador) == null ? null : ZonaEfeito.aberta(getMagiaAtiva(jogador));
         zonas[1] = getArmadilhaAtiva(jogador) == null ? null : ZonaEfeito.armadilhaSetada(getArmadilhaAtiva(jogador));

@@ -163,12 +163,6 @@ public class EmoteService {
             return repository.findById(defaultEmote.name())
                     .orElseThrow(() -> new RegraInvalidaException("Emote invalido: " + id));
         }
-        if (normalized != null) {
-            EmoteDefinition legacy = repository.findById(normalized).orElse(null);
-            if (legacy != null) {
-                return legacy;
-            }
-        }
         throw new RegraInvalidaException("Emote invalido: " + id);
     }
 

@@ -20,10 +20,12 @@ public class GerenciadorMagia {
     private final GerenciadorStatus gerenciadorStatus;
     private final ResolvedorEfeitoDeclarativo resolvedorDeclarativo;
 
-    public GerenciadorMagia(GerenciadorCompra gerenciadorCompra, GerenciadorStatus gerenciadorStatus) {
+    public GerenciadorMagia(GerenciadorCompra gerenciadorCompra,
+                            GerenciadorStatus gerenciadorStatus,
+                            ResolvedorEfeitoDeclarativo resolvedorDeclarativo) {
         this.gerenciadorCompra = gerenciadorCompra;
         this.gerenciadorStatus = gerenciadorStatus;
-        this.resolvedorDeclarativo = new ResolvedorEfeitoDeclarativo(gerenciadorCompra, gerenciadorStatus);
+        this.resolvedorDeclarativo = resolvedorDeclarativo;
     }
 
     public void jogar(CampoBatalha campo, Carta carta, AcaoEfeitoTurno acao,

@@ -17,6 +17,7 @@ import com.team.multiversaltcg.game.packs.PackDefinitionRepository;
 import com.team.multiversaltcg.game.packs.PackOpening;
 import com.team.multiversaltcg.game.packs.PackOpeningRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.text.Normalizer;
@@ -66,8 +67,9 @@ public class PackService {
     }
 
     public List<PackAdminDTO> listarAdmin() {
+        Map<String, CardAdminDTO> cardsById = cardsById(cartaDataService.listarAdmin());
         return definitionRepository.findAllByOrderByNomeAsc().stream()
-                .map(this::toAdminDTO)
+                .map(definition -> toAdminDTO(definition, cardsById))
                 .toList();
     }
 
@@ -88,16 +90,18 @@ public class PackService {
 
     public ShopDTO getShop(String playerId) {
         PlayerProfileDTO profile = profileService.ensureProfile(playerId);
+        Map<String, CardAdminDTO> cardsById = cardsById(cartaDataService.listarAdmin());
         return ShopDTO.builder()
                 .playerId(playerId)
                 .coins(profile.getCoins())
                 .packs(definitionRepository.findByActiveTrueOrderByNomeAsc().stream()
-                        .map(this::toShopDTO)
+                        .map(definition -> toShopDTO(definition, cardsById))
                         .toList())
                 .odds(odds())
                 .build();
     }
 
+    @Transactional
     public PackOpeningDTO buyPack(String playerId, String packId) {
         PackDefinition definition = getDefinition(packId);
         if (!definition.isActive()) {
@@ -133,8 +137,9 @@ public class PackService {
     }
 
     public List<PackOpeningDTO> history(String playerId) {
+        Map<String, CardAdminDTO> cardsById = cardsById(cartaDataService.listarAdmin());
         return openingRepository.findTop10ByPlayerIdOrderByCreatedAtDesc(playerId).stream()
-                .map(opening -> toDTO(opening, cardsFromIds(readIds(opening.getCardsJson())), 0))
+                .map(opening -> toDTO(opening, cardsFromIds(readIds(opening.getCardsJson()), cardsById), 0))
                 .toList();
     }
 
@@ -167,8 +172,12 @@ public class PackService {
     }
 
     private PackAdminDTO toAdminDTO(PackDefinition definition) {
+        return toAdminDTO(definition, cardsById(cartaDataService.listarAdmin()));
+    }
+
+    private PackAdminDTO toAdminDTO(PackDefinition definition, Map<String, CardAdminDTO> cardsById) {
         List<String> cardIds = readIds(definition.getCardIdsJson());
-        List<CollectionCardDTO> cards = selectedCards(definition, false).stream()
+        List<CollectionCardDTO> cards = selectedCards(definition, false, cardsById).stream()
                 .map(card -> collectionService.toCollectionCard(card, 0))
                 .toList();
         return PackAdminDTO.builder()
@@ -187,8 +196,8 @@ public class PackService {
                 .build();
     }
 
-    private PackShopDTO toShopDTO(PackDefinition definition) {
-        List<CollectionCardDTO> cards = selectedCards(definition, true).stream()
+    private PackShopDTO toShopDTO(PackDefinition definition, Map<String, CardAdminDTO> cardsById) {
+        List<CollectionCardDTO> cards = selectedCards(definition, true, cardsById).stream()
                 .map(card -> collectionService.toCollectionCard(card, 0))
                 .toList();
         return PackShopDTO.builder()
@@ -246,21 +255,28 @@ public class PackService {
     }
 
     private List<CardAdminDTO> selectedCards(PackDefinition definition, boolean activeOnly) {
-        Map<String, CardAdminDTO> cardsById = cartaDataService.listarAdmin().stream()
-                .collect(Collectors.toMap(CardAdminDTO::getId, Function.identity(), (a, b) -> a, LinkedHashMap::new));
+        return selectedCards(definition, activeOnly, cardsById(cartaDataService.listarAdmin()));
+    }
+
+    private List<CardAdminDTO> selectedCards(PackDefinition definition,
+                                             boolean activeOnly,
+                                             Map<String, CardAdminDTO> cardsById) {
         return readIds(definition.getCardIdsJson()).stream()
                 .map(cardsById::get)
                 .filter(card -> card != null && (!activeOnly || card.isActive()))
                 .toList();
     }
 
-    private List<CardAdminDTO> cardsFromIds(List<String> ids) {
-        Map<String, CardAdminDTO> cardsById = cartaDataService.listarAdmin().stream()
-                .collect(Collectors.toMap(CardAdminDTO::getId, Function.identity(), (a, b) -> a, LinkedHashMap::new));
+    private List<CardAdminDTO> cardsFromIds(List<String> ids, Map<String, CardAdminDTO> cardsById) {
         return ids.stream()
                 .map(cardsById::get)
                 .filter(card -> card != null)
                 .toList();
+    }
+
+    private Map<String, CardAdminDTO> cardsById(List<CardAdminDTO> cards) {
+        return cards.stream()
+                .collect(Collectors.toMap(CardAdminDTO::getId, Function.identity(), (a, b) -> a, LinkedHashMap::new));
     }
 
     private void validateCardIds(List<String> cardIds) {

@@ -6,6 +6,7 @@ import com.team.multiversaltcg.game.enums.FaseEnum;
 import com.team.multiversaltcg.game.enums.LiderEnum;
 import com.team.multiversaltcg.game.enums.ModoAcao;
 import com.team.multiversaltcg.game.enums.StatusEnum;
+import com.team.multiversaltcg.game.enums.TipoEfeito;
 import com.team.multiversaltcg.game.model.AcaoEfeitoTurno;
 import com.team.multiversaltcg.game.model.AcaoTurno;
 import com.team.multiversaltcg.game.model.Ataque;
@@ -50,9 +51,9 @@ public class MotorDeJogo {
         this.gerenciadorLider = new GerenciadorLider();
         this.gerenciadorCompra = new GerenciadorCompra();
         this.gerenciadorEvolucao = new GerenciadorEvolucao(cartaDataService);
-        this.gerenciadorMagia = new GerenciadorMagia(gerenciadorCompra, gerenciadorStatus);
-        this.gerenciadorArmadilha = new GerenciadorArmadilha();
         this.resolvedorDeclarativo = new ResolvedorEfeitoDeclarativo(gerenciadorCompra, gerenciadorStatus);
+        this.gerenciadorMagia = new GerenciadorMagia(gerenciadorCompra, gerenciadorStatus, resolvedorDeclarativo);
+        this.gerenciadorArmadilha = new GerenciadorArmadilha(resolvedorDeclarativo);
         this.ia = new IAInimiga();
     }
 
@@ -433,11 +434,9 @@ public class MotorDeJogo {
                 if (estrito) log("Aura insuficiente para " + atacante.getNome() + " usar " + ataque.getNome() + ".");
                 return;
             }
-            if (!ignoraArmadilhas(atacante, indiceAtaque)) {
-                GerenciadorArmadilha.ResultadoArmadilha trap = gerenciadorArmadilha.aoAtaque(campo, !jogadorAtaca,
-                        atacante, false, logTurno);
-                if (trap.cancelarAtaque()) return;
-            }
+            GerenciadorArmadilha.ResultadoArmadilha trap = gerenciadorArmadilha.aoAtaque(campo, !jogadorAtaca,
+                    atacante, false, logTurno);
+            if (trap.cancelarAtaque()) return;
             liderDefensor.perderHp(8);
             log(atacante.getNome() + " atacou o Lider " + (jogadorAtaca ? "inimigo" : "jogador") + ". -8 HP.");
             verificarLideres();
@@ -457,19 +456,16 @@ public class MotorDeJogo {
 
         boolean vantagemTipo = atacante.getTipo().getMultiplicador(defensor.getTipo()) > 1.0;
         boolean neutralizarTipo = false;
-        if (!ignoraArmadilhas(atacante, indiceAtaque)) {
-            GerenciadorArmadilha.ResultadoArmadilha trap = gerenciadorArmadilha.aoAtaque(campo, !jogadorAtaca,
-                    atacante, vantagemTipo, logTurno);
-            if (trap.cancelarAtaque()) return;
-            neutralizarTipo = trap.neutralizarTipo();
-        }
+        GerenciadorArmadilha.ResultadoArmadilha trap = gerenciadorArmadilha.aoAtaque(campo, !jogadorAtaca,
+                atacante, vantagemTipo, logTurno);
+        if (trap.cancelarAtaque()) return;
+        neutralizarTipo = trap.neutralizarTipo();
 
         ResultadoChoque resultado = gerenciadorChoque.resolver(atacante, ataque, defensor,
-                liderAtacante, liderDefensor, neutralizarTipo, ignoraDefesa(atacante, indiceAtaque, jogadorAtaca));
+                liderAtacante, liderDefensor, neutralizarTipo, magiaAtivaIgnoraDefesa(atacante, jogadorAtaca));
         resultado.setAtacanteJogador(jogadorAtaca);
         gerenciadorAura.aplicarAbsorcaoChoque(campo, resultado, jogadorAtaca);
         gerenciadorAura.aplicarBonusBloqueio(campo, resultado, !jogadorAtaca);
-        aplicarEfeitosEspeciaisAtaque(atacante, defensor, ataque, indiceAtaque, resultado, jogadorAtaca);
         if (resultado.foiVitoria()) {
             resolvedorDeclarativo.aplicar(campo, atacante.getTemplate(), EfeitoTrigger.AO_VENCER_CHOQUE,
                     jogadorAtaca, null, atacante, defensor, null, logTurno);
@@ -491,82 +487,11 @@ public class MotorDeJogo {
         return Math.max(0, Math.min(indice, atacante.getTemplate().getAtaques().size() - 1));
     }
 
-    private boolean ignoraDefesa(MonstroInstancia atacante, int indiceAtaque, boolean jogadorAtaca) {
+    private boolean magiaAtivaIgnoraDefesa(MonstroInstancia atacante, boolean jogadorAtaca) {
         Carta magia = campo.getMagiaAtiva(jogadorAtaca);
-        return "wargreymon".equals(atacante.getId())
-                || "magonegro".equals(atacante.getId())
-                || ("agumon".equals(atacante.getId()) && indiceAtaque == 2)
-                || (magia != null && "portal_sombras".equals(magia.getId())
-                && atacante.getTipo() == com.team.multiversaltcg.game.enums.TipoUniversal.SOMBRA);
-    }
-
-    private boolean ignoraArmadilhas(MonstroInstancia atacante, int indiceAtaque) {
-        return "dragao".equals(atacante.getId()) && indiceAtaque == 2;
-    }
-
-    private void aplicarEfeitosEspeciaisAtaque(MonstroInstancia atacante, MonstroInstancia defensor,
-                                               Ataque ataque, int indiceAtaque, ResultadoChoque resultado,
-                                               boolean jogadorAtaca) {
-        if (!resultado.foiVitoria()) return;
-        MonstroInstancia[] aliados = jogadorAtaca ? campo.getSlotsJogador() : campo.getSlotsInimigo();
-        MonstroInstancia[] inimigos = jogadorAtaca ? campo.getSlotsInimigo() : campo.getSlotsJogador();
-
-        switch (atacante.getId()) {
-            case "charizard" -> {
-                if (indiceAtaque == 2) {
-                    for (MonstroInstancia m : inimigos) if (m != null) gerenciadorStatus.aplicarStatus(m, StatusEnum.QUEIMADO, 2);
-                }
-            }
-            case "pikachu" -> {
-                if (indiceAtaque == 1) pressionarOutroInimigo(inimigos, defensor, 1);
-            }
-            case "squirtle" -> {
-                if (indiceAtaque == 0) campo.adicionarAura(jogadorAtaca, 1);
-                if (indiceAtaque == 2) defensor.setDefBuff(defensor.getDefBuff() - 20);
-            }
-            case "bulbasaur" -> {
-                if (indiceAtaque == 0) curarMaisPressionado(aliados, 1);
-            }
-            case "garurumon" -> {
-                if (indiceAtaque == 2) gerenciadorStatus.aplicarStatus(defensor, StatusEnum.ENVENENADO, 4);
-            }
-            case "dragao" -> {
-                if (indiceAtaque == 1) defensor.setCancelarProximoAtaque(true);
-            }
-            case "zagueiro" -> {
-                if (indiceAtaque == 1) {
-                    atacante.setDefBuff(atacante.getDefBuff() + 30);
-                    for (MonstroInstancia m : aliados) if (m != null && m != atacante) m.setDefBuff(m.getDefBuff() + 20);
-                }
-            }
-            case "orei" -> {
-                if (indiceAtaque == 2) for (MonstroInstancia m : aliados) if (m != null) m.curarPressao(1);
-            }
-            case "patamon" -> {
-                if (indiceAtaque == 0) gerenciadorCompra.comprar(campo, jogadorAtaca, logTurno, true);
-                if (indiceAtaque == 1) curarMaisPressionado(aliados, 2);
-            }
-            case "angemon" -> curarMaisPressionado(aliados, 1);
-            default -> {
-            }
-        }
-    }
-
-    private void pressionarOutroInimigo(MonstroInstancia[] inimigos, MonstroInstancia defensor, int quantidade) {
-        for (MonstroInstancia m : inimigos) {
-            if (m != null && m != defensor) {
-                m.adicionarPressao(quantidade);
-                return;
-            }
-        }
-    }
-
-    private void curarMaisPressionado(MonstroInstancia[] slots, int quantidade) {
-        MonstroInstancia alvo = null;
-        for (MonstroInstancia m : slots) {
-            if (m != null && (alvo == null || m.getPressure() > alvo.getPressure())) alvo = m;
-        }
-        if (alvo != null) alvo.curarPressao(quantidade);
+        return magia != null
+                && magia.getEfeito() == TipoEfeito.IGNORAR_DEFESA
+                && (magia.getTipoAlvo() == null || atacante.getTipo() == magia.getTipoAlvo());
     }
 
     private void processarKO() {
@@ -581,9 +506,18 @@ public class MotorDeJogo {
     }
 
     private void comprarParaProximoTurno() {
-        gerenciadorCompra.comprarTurno(campo, true, logTurno);
+        comprarObrigatoriaTurno(true);
         if (campo.isJogoEncerrado()) return;
-        gerenciadorCompra.comprarTurno(campo, false, logTurno);
+        comprarObrigatoriaTurno(false);
+    }
+
+    private void comprarObrigatoriaTurno(boolean jogador) {
+        if (campo.getDeck(jogador).isEmpty()) {
+            campo.encerrarJogo(jogador ? "INIMIGO" : "JOGADOR");
+            log((jogador ? "Jogador" : "Inimigo") + " tentou comprar com deck vazio e perdeu.");
+            return;
+        }
+        gerenciadorCompra.comprarTurno(campo, jogador, logTurno);
     }
 
     private Carta removerDaMao(boolean jogador, int indiceMao, CardType tipoEsperado) {

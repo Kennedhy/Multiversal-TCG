@@ -36,19 +36,27 @@ public class GameSessionManager {
 
     public List<String> processarTurno(String roomId, TurnoJogador turno) {
         GameService service = getSessao(roomId);
-        List<String> log = service.processarTurno(turno);
-        if (service.getCampo().isJogoEncerrado()) {
-            encerrarSessao(roomId);
+        synchronized (service) {
+            List<String> log = service.processarTurno(turno);
+            if (service.getCampo().isJogoEncerrado()) {
+                encerrarSessao(roomId);
+            }
+            return log;
         }
-        return log;
     }
 
     public CampoBatalha getEstado(String roomId) {
-        return getSessao(roomId).getCampo();
+        GameService service = getSessao(roomId);
+        synchronized (service) {
+            return service.getCampo();
+        }
     }
 
     public List<String> getLog(String roomId) {
-        return getSessao(roomId).getLogTurno();
+        GameService service = getSessao(roomId);
+        synchronized (service) {
+            return service.getLogTurno();
+        }
     }
 
     public boolean sessaoExiste(String roomId) {

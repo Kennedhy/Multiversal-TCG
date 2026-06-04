@@ -8,6 +8,7 @@ import com.team.multiversaltcg.game.dto.CollectionDTO;
 import com.team.multiversaltcg.game.dto.DeckEntryDTO;
 import com.team.multiversaltcg.game.model.RegraInvalidaException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +38,18 @@ public class PlayerCollectionService {
                 .build();
     }
 
+    @Transactional
     public void addCards(String playerId, List<String> cardIds) {
-        for (String cardId : cardIds) {
-            addCard(playerId, cardId, 1);
+        Map<String, Integer> copiesByCard = new HashMap<>();
+        for (String cardId : cardIds == null ? List.<String>of() : cardIds) {
+            copiesByCard.merge(cardId, 1, Integer::sum);
+        }
+        for (Map.Entry<String, Integer> entry : copiesByCard.entrySet()) {
+            addCard(playerId, entry.getKey(), entry.getValue());
         }
     }
 
+    @Transactional
     public void addCard(String playerId, String cardId, int copies) {
         if (cartaDataService.getById(cardId) == null) {
             throw new RegraInvalidaException("Carta nao encontrada: " + cardId);
@@ -70,11 +77,12 @@ public class PlayerCollectionService {
             if (entry.getDeckCopies() <= 0) continue;
             requested.merge(entry.getId(), entry.getDeckCopies(), Integer::sum);
         }
+        Map<String, Integer> owned = ownedMap(playerId);
         for (Map.Entry<String, Integer> entry : requested.entrySet()) {
-            int owned = copiesOf(playerId, entry.getKey());
-            if (entry.getValue() > owned) {
+            int ownedCopies = owned.getOrDefault(entry.getKey(), 0);
+            if (entry.getValue() > ownedCopies) {
                 throw new RegraInvalidaException("Deck usa " + entry.getValue()
-                        + " copia(s) de " + entry.getKey() + ", mas a colecao possui " + owned + ".");
+                        + " copia(s) de " + entry.getKey() + ", mas a colecao possui " + ownedCopies + ".");
             }
         }
     }

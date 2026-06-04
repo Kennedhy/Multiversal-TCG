@@ -33,9 +33,7 @@ import java.util.Map;
 @Service
 public class CartaDataService {
 
-    private static final String SOURCE_BASE = "BASE";
     private static final String SOURCE_CUSTOM = "CUSTOM";
-    private static final List<String> DEFAULT_DECK_IDS = List.of();
 
     private final Map<String, Carta> cartas = new HashMap<>();
     private final CardDefinitionRepository repository;
@@ -44,7 +42,6 @@ public class CartaDataService {
     public CartaDataService() {
         this.repository = null;
         this.objectMapper = new ObjectMapper();
-        carregarCartasBase();
     }
 
     @Autowired
@@ -56,35 +53,32 @@ public class CartaDataService {
     @PostConstruct
     public void inicializarPersistencia() {
         if (repository == null) return;
-        seedBase();
+        normalizarCartasPersistidas();
         recarregarDoBanco();
     }
 
-    private void seedBase() {
-        Map<String, Carta> base = construirCartasBase();
-        if (repository.count() == 0) {
-            for (Carta carta : base.values()) {
-                int copias = DEFAULT_DECK_IDS.contains(carta.getId()) ? 1 : 0;
-                repository.save(toDefinition(carta, true, copias, SOURCE_BASE));
-            }
-        }
+    private void normalizarCartasPersistidas() {
         for (CardDefinition definition : repository.findAll()) {
+            boolean changed = false;
             if (definition.getRarity() == null || definition.getRarity().isBlank()) {
                 definition.setRarity(defaultRarity(definition.getId(), definition.getCardType()));
-                repository.save(definition);
+                changed = true;
             }
             if (definition.getRaritiesJson() == null || definition.getRaritiesJson().isBlank()) {
                 definition.setRaritiesJson(writeJson(normalizeRarities(
                         List.of(),
                         definition.getRarity(),
                         defaultRarity(definition.getId(), definition.getCardType()))));
-                repository.save(definition);
+                changed = true;
             }
             if (definition.getRarityImageUrlsJson() == null || definition.getRarityImageUrlsJson().isBlank()) {
                 definition.setRarityImageUrlsJson(writeJson(normalizeRarityImageUrls(
                         Map.of(),
                         definition.getImageUrl(),
                         definitionRarities(definition))));
+                changed = true;
+            }
+            if (changed) {
                 repository.save(definition);
             }
         }
@@ -96,166 +90,6 @@ public class CartaDataService {
             Carta carta = toCarta(definition);
             if (carta != null) cartas.put(carta.getId(), carta);
         }
-    }
-
-    private void carregarCartasBase() {
-        cartas.clear();
-        cartas.putAll(construirCartasBase());
-    }
-
-    private Map<String, Carta> construirCartasBase() {
-        return new HashMap<>();
-    }
-
-    private void carregarMonstros(Map<String, Carta> destino) {
-        monstro(destino, "charizard", "Charizard", TipoUniversal.CHAMA, "Pokemon", 90, 45, null,
-                "/images/cards/monsters/charizard.png",
-                List.of(ataque("Brasa", 2, 0),
-                        ataqueStatus("Labareda Furiosa", 4, 20, StatusEnum.QUEIMADO, 2),
-                        ataqueStatus("Inferno Supremo", 7, 50, StatusEnum.QUEIMADO, 2)));
-        monstro(destino, "pikachu", "Pikachu", TipoUniversal.RELAMPAGO, "Pokemon", 70, 28, "raichu",
-                "/images/cards/monsters/pikachu.png",
-                List.of(ataque("Choque", 1, 0),
-                        ataque("Raio Duplo", 3, 15),
-                        ataqueStatus("Tempestade Eletrica", 6, 40, StatusEnum.CONFUSO, 2)));
-        monstro(destino, "squirtle", "Squirtle", TipoUniversal.ABISMO, "Pokemon", 45, 68, "blastoise",
-                "/images/cards/monsters/squirtle.png",
-                List.of(ataque("Bolha", 1, 0),
-                        ataque("Hidrojato", 3, 10),
-                        ataqueStatus("Maremoto", 6, 30, StatusEnum.CONGELADO, 1)));
-        monstro(destino, "bulbasaur", "Bulbasaur", TipoUniversal.NATUREZA, "Pokemon", 50, 55, null,
-                "/images/cards/monsters/bulbasaur.png",
-                List.of(ataque("Chicote de Vinha", 2, 0),
-                        ataqueStatus("Po Venenoso", 3, 0, StatusEnum.ENVENENADO, 4),
-                        ataqueStatus("Esporulacao", 5, 20, StatusEnum.ENVENENADO, 4)));
-        monstro(destino, "agumon", "Agumon", TipoUniversal.CHAMA, "Digimon", 68, 52, "greymon",
-                "/images/cards/monsters/agumon.png",
-                List.of(ataque("Bolinha de Fogo", 2, 0),
-                        ataqueStatus("Pepper Breath", 4, 25, StatusEnum.QUEIMADO, 2),
-                        ataque("Nova Chama", 7, 45)));
-        monstro(destino, "garurumon", "Garurumon", TipoUniversal.ABISMO, "Digimon", 88, 68, null,
-                "/images/cards/monsters/garurumon.png",
-                List.of(ataque("Garras", 2, 0),
-                        ataqueStatus("Uivo Gelido", 4, 20, StatusEnum.CONGELADO, 1),
-                        ataqueStatus("Blizzard Mortal", 8, 55, StatusEnum.CONGELADO, 1)));
-        monstro(destino, "magonegro", "Mago Negro", TipoUniversal.SOMBRA, "Yu-Gi-Oh", 105, 42, null,
-                "/images/cards/monsters/mago_negro.png",
-                List.of(ataque("Varinha", 3, 0),
-                        ataqueStatus("Magia Negra", 5, 30, StatusEnum.CONFUSO, 2),
-                        ataqueStatus("Aniquilacao Arcana", 8, 70, StatusEnum.CONFUSO, 2)));
-        monstro(destino, "dragao", "Dragao Azul", TipoUniversal.ETER, "Yu-Gi-Oh", 125, 28, null,
-                "/images/cards/monsters/dragao_azul.png",
-                List.of(ataque("Sopro Divino", 3, 0),
-                        ataque("Rajada Celestial", 5, 40),
-                        ataque("Aniquilacao Total", 9, 80)));
-        monstro(destino, "zagueiro", "Zagueiro Muro", TipoUniversal.ABISMO, "Futebol", 42, 95, null,
-                "/images/cards/monsters/zagueiro_muro.png",
-                List.of(ataque("Carrinho", 2, 0),
-                        ataque("Barreira Viva", 3, 0),
-                        ataque("Muro Absoluto", 6, 15)));
-        monstro(destino, "pontaveloz", "Ponta Veloz", TipoUniversal.RELAMPAGO, "Futebol", 75, 25, null,
-                "/images/cards/monsters/ponta_veloz.png",
-                List.of(ataque("Drible", 2, 0),
-                        ataque("Chute de Trivela", 4, 30),
-                        ataque("Finalizacao Olimpica", 6, 50)));
-        monstro(destino, "orei", "O Rei", TipoUniversal.CHAMA, "Figuras BR", 74, 62, null,
-                "/images/cards/monsters/o_rei.png",
-                List.of(ataque("Gol de Placa", 3, 0),
-                        ataque("Drible do Rei", 4, 15),
-                        ataque("Rei em Campo", 7, 40)));
-        monstro(destino, "patamon", "Patamon", TipoUniversal.ETER, "Digimon", 52, 48, "angemon",
-                "/images/cards/monsters/patamon.png",
-                List.of(ataque("Boom Bubble", 1, 0),
-                        ataque("Heavenly Knuckle", 3, 15),
-                        ataqueStatus("Angel Barrage", 5, 30, StatusEnum.CONGELADO, 1)));
-
-        monstro(destino, "raichu", "Raichu", TipoUniversal.RELAMPAGO, "Pokemon", 92, 48, null,
-                "/images/cards/evolutions/raichu.png",
-                List.of(ataque("Impacto Eletrico", 2, 10),
-                        ataqueStatus("Trovao Cruzado", 5, 35, StatusEnum.CONFUSO, 2),
-                        ataque("Tempestade Final", 8, 70)));
-        monstro(destino, "blastoise", "Blastoise", TipoUniversal.ABISMO, "Pokemon", 65, 112, null,
-                "/images/cards/evolutions/blastoise.png",
-                List.of(ataque("Canhao de Agua", 3, 10),
-                        ataqueStatus("Tsunami Blindado", 6, 35, StatusEnum.CONGELADO, 1),
-                        ataque("Fortaleza Abissal", 8, 60)));
-        monstro(destino, "greymon", "Greymon", TipoUniversal.CHAMA, "Digimon", 90, 66, "wargreymon",
-                "/images/cards/evolutions/greymon.png",
-                List.of(ataque("Garra Flamejante", 3, 10),
-                        ataqueStatus("Mega Flame", 6, 40, StatusEnum.QUEIMADO, 2),
-                        ataque("Chama Primal", 9, 75)));
-        monstro(destino, "wargreymon", "WarGreymon", TipoUniversal.CHAMA, "Digimon", 118, 76, null,
-                "/images/cards/evolutions/wargreymon.png",
-                List.of(ataque("Dramon Killer", 4, 20),
-                        ataqueStatus("Gaia Force", 7, 55, StatusEnum.QUEIMADO, 2),
-                        ataque("Terra Destroyer", 9, 90)));
-        monstro(destino, "angemon", "Angemon", TipoUniversal.ETER, "Digimon", 80, 65, null,
-                "/images/cards/evolutions/angemon.png",
-                List.of(ataque("Luz Sagrada", 3, 15),
-                        ataqueStatus("Punho Celestial", 5, 35, StatusEnum.CONGELADO, 1),
-                        ataque("Julgamento Angelical", 8, 70)));
-    }
-
-    private void carregarEvolucoes(Map<String, Carta> destino) {
-        evolucao(destino, "evoluir_raichu", "Pedra Trovao", "Evolui Pikachu para Raichu.",
-                "pikachu", "raichu", "/images/cards/evolutions/raichu.png");
-        evolucao(destino, "evoluir_blastoise", "Evolucao Aquatica", "Evolui Squirtle para Blastoise.",
-                "squirtle", "blastoise", "/images/cards/evolutions/blastoise.png");
-        evolucao(destino, "evoluir_greymon", "Digivolucao Champion", "Evolui Agumon para Greymon.",
-                "agumon", "greymon", "/images/cards/evolutions/greymon.png");
-        evolucao(destino, "evoluir_wargreymon", "Digivolucao Ultimate", "Evolui Greymon para WarGreymon.",
-                "greymon", "wargreymon", "/images/cards/evolutions/wargreymon.png");
-        evolucao(destino, "evoluir_angemon", "Digivolucao Celestial", "Evolui Patamon para Angemon.",
-                "patamon", "angemon", "/images/cards/evolutions/angemon.png");
-    }
-
-    private void carregarMagias(Map<String, Carta> destino) {
-        magia(destino, "boost_chama", "Boost de Chama", "Monstros Chama aliados recebem +10 ATK por turno.",
-                TipoEfeito.BOOST_ATK_TIPO, 0, 10, -1, TipoUniversal.CHAMA, "/images/cards/magics/boost_chama.png");
-        magia(destino, "escudo_abissal", "Escudo Abissal", "Reduz Pressao recebida e expira em 3 turnos.",
-                TipoEfeito.SHIELD_PRESSAO, 0, 1, 3, TipoUniversal.ABISMO, "/images/cards/magics/escudo_abissal.png");
-        magia(destino, "cura_natureza", "Cura Natureza", "Remove status e cura Pressao por turno.",
-                TipoEfeito.CURA_STATUS, 0, 1, -1, TipoUniversal.NATUREZA, "/images/cards/magics/cura_natureza.png");
-        magia(destino, "tempestade", "Tempestade", "Compre 2 cartas e absorva Aura extra em vitorias.",
-                TipoEfeito.DRAW_CARTAS, 0, 2, -1, TipoUniversal.RELAMPAGO, "/images/cards/magics/tempestade.png");
-        magia(destino, "portal_sombras", "Portal das Sombras", "Remove bonus defensivos e ignora defesa por 2 turnos.",
-                TipoEfeito.IGNORAR_DEFESA, 0, 1, 2, TipoUniversal.SOMBRA, "/images/cards/magics/portal_sombras.png");
-        magia(destino, "luz_eterna", "Luz Eterna", "Cura Pressao e da imunidade a monstros Eter.",
-                TipoEfeito.IMUNIDADE_STATUS, 0, 1, -1, TipoUniversal.ETER, "/images/cards/magics/luz_eterna.png");
-        magia(destino, "campo_sagrado", "Campo Sagrado", "Farm gera +1 Aura extra.",
-                TipoEfeito.BOOST_AURA_FARM, 0, 1, -1, null, "/images/cards/magics/campo_sagrado.png");
-        magia(destino, "nexo_digital", "Nexo Digital", "Escolha 1 das 3 cartas do topo; evolucoes ficam gratis.",
-                TipoEfeito.BUSCA_DECK, 0, 1, 3, null, "/images/cards/magics/nexo_digital.png");
-    }
-
-    private void carregarArmadilhas(Map<String, Carta> destino) {
-        armadilha(destino, "contra_ataque", "Contra-Ataque", "Quando o inimigo ataca, aplica Pressao ao atacante.",
-                TriggerArmadilha.INIMIGO_ATACA, TipoEfeito.PRESSAO_ALVO, 1, "/images/cards/traps/contra_ataque.png");
-        armadilha(destino, "armadilha_explosiva", "Armadilha Explosiva", "Monstro inimigo invocado entra pressionado.",
-                TriggerArmadilha.INIMIGO_INVOCA, TipoEfeito.PRESSAO_ALVO, 1, "/images/cards/traps/armadilha_explosiva.png");
-        armadilha(destino, "barreira_tipo", "Barreira de Tipo", "Cancela multiplicador de vantagem naquele choque.",
-                TriggerArmadilha.INIMIGO_USA_VANTAGEM_TIPO, TipoEfeito.BARREIRA_TIPO, 0, "/images/cards/traps/barreira_tipo.png");
-        armadilha(destino, "julgamento", "Julgamento", "Antes do KO, aplica 2 Pressoes no inimigo mais pressionado.",
-                TriggerArmadilha.SEU_MONSTRO_KO, TipoEfeito.JULGAMENTO, 2, "/images/cards/traps/julgamento.png");
-        armadilha(destino, "espelho_magico", "Espelho Magico", "Anula uma magia inimiga.",
-                TriggerArmadilha.INIMIGO_JOGA_MAGIA, TipoEfeito.ESPELHO_MAGICO, 0, "/images/cards/traps/espelho_magico.png");
-    }
-
-    private void carregarAliasesLegados(Map<String, Carta> destino) {
-        magia(destino, "fonte_aura", "Fonte de Aura", "Ganha 4 de Aura.", TipoEfeito.AURA, 0, 4, 0, null,
-                "/images/cards/magics/campo_sagrado.png");
-        magia(destino, "cura_tatica", "Cura Tatica", "Recupera 8 HP do lider.", TipoEfeito.CURAR_LIDER, 0, 8, 0, null,
-                "/images/cards/magics/cura_natureza.png");
-        magia(destino, "forja_atk", "Forja de Ataque", "Um monstro aliado recebe +20 ATK.", TipoEfeito.BUFF_ATK, 2, 20, 0, null,
-                "/images/cards/magics/boost_chama.png");
-        magia(destino, "muralha_def", "Muralha de Defesa", "Um monstro aliado recebe +20 DEF.", TipoEfeito.BUFF_DEF, 2, 20, 0, null,
-                "/images/cards/magics/escudo_abissal.png");
-        armadilha(destino, "escudo_reativo", "Escudo Reativo", "Quando o inimigo ataca, cancela esse ataque.",
-                TriggerArmadilha.INIMIGO_ATACA, TipoEfeito.CANCELAR_ATAQUE, 0, "/images/cards/traps/barreira_tipo.png");
-        armadilha(destino, "buraco_instavel", "Buraco Instavel", "Invocar ou atacar aplica 1 Pressao.",
-                TriggerArmadilha.AMBOS, TipoEfeito.PRESSAO_ALVO, 1, "/images/cards/traps/armadilha_explosiva.png");
-        evolucao(destino, "evoluir_venusaur", "Evolucao: Venusaur", "Alias legado sem uso no deck.",
-                "bulbasaur", "bulbasaur", "/images/cards/evolutions/angemon.png");
     }
 
     public Carta getById(String id) {
@@ -279,24 +113,8 @@ public class CartaDataService {
         return cartas.values().stream().map(Carta::copy).toList();
     }
 
-    public List<Carta> getMonstrosPadrao() {
-        return List.of();
-    }
-
-    public List<Carta> getMagiasPadrao() {
-        return List.of();
-    }
-
-    public List<Carta> getArmadilhasPadrao() {
-        return List.of();
-    }
-
-    public List<Carta> getEvolucoesPadrao() {
-        return List.of();
-    }
-
     public List<Carta> getDeckPadrao() {
-        if (repository == null) return ids(DEFAULT_DECK_IDS);
+        if (repository == null) return List.of();
 
         List<Carta> deck = new ArrayList<>();
         for (CardDefinition definition : repository.findByActiveTrueAndDeckCopiesGreaterThanOrderByNomeAsc(0)) {
@@ -332,14 +150,6 @@ public class CartaDataService {
         return repository.findAllByOrderByNomeAsc().stream().map(this::toAdminDTO).toList();
     }
 
-    public List<CardAdminDTO> listarAtivasAdmin() {
-        exigirRepositorio();
-        return repository.findAllByOrderByNomeAsc().stream()
-                .filter(CardDefinition::isActive)
-                .map(this::toAdminDTO)
-                .toList();
-    }
-
     public CardAdminDTO buscarAdmin(String id) {
         exigirRepositorio();
         return repository.findById(id).map(this::toAdminDTO)
@@ -360,10 +170,6 @@ public class CartaDataService {
                 .orElseThrow(() -> new RegraInvalidaException("Carta nao encontrada: " + id));
         repository.delete(definition);
         recarregarDoBanco();
-    }
-
-    public CardAdminDTO atualizarImagem(String id, String imageUrl) {
-        return atualizarImagem(id, imageUrl, null);
     }
 
     public CardAdminDTO atualizarImagem(String id, String imageUrl, String rarity) {
@@ -480,15 +286,6 @@ public class CartaDataService {
         );
     }
 
-    private List<Carta> ids(List<String> ids) {
-        List<Carta> resultado = new ArrayList<>();
-        for (String id : ids) {
-            Carta carta = getById(id);
-            if (carta != null) resultado.add(carta);
-        }
-        return resultado;
-    }
-
     private CardDefinition toDefinition(CardAdminDTO dto, String idForcado) {
         boolean criando = idForcado == null || idForcado.isBlank();
         String id = criando
@@ -532,44 +329,6 @@ public class CartaDataService {
                 .regrasJson(writeJson(dto.getRegras() == null ? List.of() : dto.getRegras()))
                 .active(dto.isActive())
                 .deckCopies(Math.max(0, dto.getDeckCopies()))
-                .source(source)
-                .build();
-    }
-
-    private CardDefinition toDefinition(Carta carta, boolean active, int deckCopies, String source) {
-        String rarity = carta.getRarity() == null
-                ? defaultRarity(carta.getId(), carta.getCardType().name())
-                : carta.getRarity().name();
-        Map<String, String> rarityImageUrls = normalizeRarityImageUrls(
-                carta.getRarityImageUrls(),
-                carta.getImageUrl(),
-                List.of(rarity));
-        return CardDefinition.builder()
-                .id(carta.getId())
-                .nome(carta.getNome())
-                .descricao(carta.getDescricao())
-                .imageUrl(imageUrlFor(rarityImageUrls, carta.getImageUrl(), rarity))
-                .cardType(carta.getCardType().name())
-                .rarityImageUrlsJson(writeJson(rarityImageUrls))
-                .rarity(rarity)
-                .raritiesJson(writeJson(List.of(rarity)))
-                .tipo(carta.getTipo() == null ? null : carta.getTipo().name())
-                .universo(carta.getUniverso())
-                .atk(carta.getAtk())
-                .def(carta.getDef())
-                .evolucaoId(carta.getEvolucaoId())
-                .efeito(carta.getEfeito() == null ? null : carta.getEfeito().name())
-                .trigger(carta.getTrigger() == null ? null : carta.getTrigger().name())
-                .custoAura(carta.getCustoAura())
-                .valor(carta.getValor())
-                .duracao(carta.getDuracao())
-                .tipoAlvo(carta.getTipoAlvo() == null ? null : carta.getTipoAlvo().name())
-                .baseMonsterId(carta.getBaseMonsterId())
-                .evolvedMonsterId(carta.getEvolvedMonsterId())
-                .ataquesJson(writeJson(carta.getAtaques() == null ? List.of() : carta.getAtaques()))
-                .regrasJson(writeJson(carta.getRegras() == null ? List.of() : carta.getRegras()))
-                .active(active)
-                .deckCopies(deckCopies)
                 .source(source)
                 .build();
     }
@@ -676,55 +435,6 @@ public class CartaDataService {
         if (cardType == CardType.ARMADILHA && isBlank(dto.getTrigger())) {
             throw new RegraInvalidaException("Armadilhas precisam de trigger.");
         }
-    }
-
-    private void monstro(Map<String, Carta> destino, String id, String nome, TipoUniversal tipo, String universo,
-                         int atk, int def, String evolucaoId, String imageUrl, List<Ataque> ataques) {
-        add(destino, Carta.builder()
-                .id(id).nome(nome).cardType(CardType.MONSTRO).tipo(tipo).universo(universo)
-                .atk(atk).def(def).evolucaoId(evolucaoId).imageUrl(imageUrl).ataques(ataques)
-                .build());
-    }
-
-    private void magia(Map<String, Carta> destino, String id, String nome, String descricao, TipoEfeito efeito,
-                       int custoAura, int valor, int duracao, TipoUniversal tipoAlvo, String imageUrl) {
-        add(destino, Carta.builder()
-                .id(id).nome(nome).descricao(descricao).cardType(CardType.MAGIA)
-                .efeito(efeito).custoAura(custoAura).valor(valor).duracao(duracao)
-                .turnosRestantes(duracao).tipoAlvo(tipoAlvo).imageUrl(imageUrl)
-                .build());
-    }
-
-    private void armadilha(Map<String, Carta> destino, String id, String nome, String descricao,
-                           TriggerArmadilha trigger, TipoEfeito efeito, int valor, String imageUrl) {
-        add(destino, Carta.builder()
-                .id(id).nome(nome).descricao(descricao).cardType(CardType.ARMADILHA)
-                .trigger(trigger).efeito(efeito).valor(valor).imageUrl(imageUrl)
-                .build());
-    }
-
-    private void evolucao(Map<String, Carta> destino, String id, String nome, String descricao,
-                          String baseMonsterId, String evolvedMonsterId, String imageUrl) {
-        add(destino, Carta.builder()
-                .id(id).nome(nome).descricao(descricao).cardType(CardType.EVOLUCAO)
-                .baseMonsterId(baseMonsterId).evolvedMonsterId(evolvedMonsterId).imageUrl(imageUrl)
-                .build());
-    }
-
-    private Ataque ataque(String nome, int custoAura, int bonusAtk) {
-        return Ataque.builder().nome(nome).custoAura(custoAura).bonusAtk(bonusAtk).build();
-    }
-
-    private Ataque ataqueStatus(String nome, int custoAura, int bonusAtk,
-                                StatusEnum status, int duracao) {
-        return Ataque.builder()
-                .nome(nome).custoAura(custoAura).bonusAtk(bonusAtk)
-                .statusAplicado(status).duracaoStatus(duracao)
-                .build();
-    }
-
-    private void add(Map<String, Carta> destino, Carta carta) {
-        destino.put(carta.getId(), carta);
     }
 
     private void exigirRepositorio() {

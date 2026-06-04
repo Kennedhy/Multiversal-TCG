@@ -14,6 +14,7 @@ import com.team.multiversaltcg.game.engine.GerenciadorEvolucao;
 import com.team.multiversaltcg.game.engine.GerenciadorMagia;
 import com.team.multiversaltcg.game.engine.GerenciadorCompra;
 import com.team.multiversaltcg.game.engine.GerenciadorStatus;
+import com.team.multiversaltcg.game.engine.ResolvedorEfeitoDeclarativo;
 import com.team.multiversaltcg.game.model.AcaoTurno;
 import com.team.multiversaltcg.game.model.AcaoEfeitoTurno;
 import com.team.multiversaltcg.game.model.Ataque;
@@ -223,7 +224,7 @@ class GameServiceEffectTests {
         GameService service = novoJogo();
         CampoBatalha campo = service.getCampo();
         java.util.ArrayList<String> log = new java.util.ArrayList<>();
-        GerenciadorMagia magia = new GerenciadorMagia(new GerenciadorCompra(), new GerenciadorStatus());
+        GerenciadorMagia magia = novoGerenciadorMagia();
 
         magia.jogar(campo, cartas.getById("campo_sagrado"), AcaoEfeitoTurno.builder().build(), true, log);
         magia.jogar(campo, cartas.getById("nexo_digital"), AcaoEfeitoTurno.builder().escolhaBusca(0).build(), true, log);
@@ -259,7 +260,7 @@ class GameServiceEffectTests {
                                 .build()))
                         .build()))
                 .build();
-        GerenciadorMagia magia = new GerenciadorMagia(new GerenciadorCompra(), new GerenciadorStatus());
+        GerenciadorMagia magia = novoGerenciadorMagia();
 
         magia.jogar(campo, custom, AcaoEfeitoTurno.builder()
                 .slotAlvo(0)
@@ -274,6 +275,12 @@ class GameServiceEffectTests {
         GameService service = new GameService(cartas);
         service.iniciarPartida("ASH");
         return service;
+    }
+
+    private GerenciadorMagia novoGerenciadorMagia() {
+        GerenciadorCompra compra = new GerenciadorCompra();
+        GerenciadorStatus status = new GerenciadorStatus();
+        return new GerenciadorMagia(compra, status, new ResolvedorEfeitoDeclarativo(compra, status));
     }
 
     private void limparCampo(CampoBatalha campo) {

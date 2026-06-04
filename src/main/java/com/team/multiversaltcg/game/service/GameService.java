@@ -9,11 +9,9 @@ import com.team.multiversaltcg.game.model.Lider;
 import com.team.multiversaltcg.game.model.PartidaEncerradaException;
 import com.team.multiversaltcg.game.model.RegraInvalidaException;
 import com.team.multiversaltcg.game.model.TurnoJogador;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class GameService {
 
     private final CartaDataService cartaDataService;

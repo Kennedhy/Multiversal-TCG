@@ -13,8 +13,11 @@ import java.util.List;
 
 public class GerenciadorArmadilha {
 
-    private final ResolvedorEfeitoDeclarativo resolvedorDeclarativo =
-            new ResolvedorEfeitoDeclarativo(new GerenciadorCompra(), new GerenciadorStatus());
+    private final ResolvedorEfeitoDeclarativo resolvedorDeclarativo;
+
+    public GerenciadorArmadilha(ResolvedorEfeitoDeclarativo resolvedorDeclarativo) {
+        this.resolvedorDeclarativo = resolvedorDeclarativo;
+    }
 
     public record ResultadoArmadilha(boolean cancelarAtaque, boolean neutralizarTipo) {
         public static ResultadoArmadilha nenhuma() {
