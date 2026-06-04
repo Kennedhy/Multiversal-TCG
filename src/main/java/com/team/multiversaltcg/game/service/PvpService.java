@@ -1,6 +1,8 @@
 package com.team.multiversaltcg.game.service;
 
+import com.team.multiversaltcg.game.dto.EmoteAdminDTO;
 import com.team.multiversaltcg.game.dto.EstadoJogoDTO;
+import com.team.multiversaltcg.game.dto.PvpEmoteEvent;
 import com.team.multiversaltcg.game.dto.PvpRoomResponse;
 import com.team.multiversaltcg.game.dto.PvpRoomViewDTO;
 import com.team.multiversaltcg.game.dto.PvpStateResponse;
@@ -16,6 +18,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -25,18 +29,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PvpService {
 
     private static final String CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final Duration EMOTE_COOLDOWN = Duration.ofSeconds(2);
 
     private final Map<String, PvpRoom> rooms = new ConcurrentHashMap<>();
     private final PlayerDeckService playerDeckService;
     private final CartaDataService cartaDataService;
+    private final MatchHistoryService matchHistoryService;
+    private final EmoteService emoteService;
     private final SimpMessagingTemplate messagingTemplate;
     private final SecureRandom random = new SecureRandom();
 
     public PvpService(PlayerDeckService playerDeckService,
                       CartaDataService cartaDataService,
+                      MatchHistoryService matchHistoryService,
+                      EmoteService emoteService,
                       SimpMessagingTemplate messagingTemplate) {
         this.playerDeckService = playerDeckService;
         this.cartaDataService = cartaDataService;
+        this.matchHistoryService = matchHistoryService;
+        this.emoteService = emoteService;
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -115,6 +126,7 @@ public class PvpService {
                 room.setGuestPendingTurn(null);
                 if (room.getGameService().getCampo().isJogoEncerrado()) {
                     room.setStatus(PvpRoomStatus.FINISHED);
+                    recordResultIfNeeded(room);
                 }
             } else {
                 room.setLastLog(List.of("Aguardando o outro jogador finalizar o turno."));
@@ -122,6 +134,49 @@ public class PvpService {
         }
         publish(room);
         return stateFor(room, normalize(username));
+    }
+
+    public PvpEmoteEvent sendEmote(String username, String code, String emoteId) {
+        String player = normalize(username);
+        PvpRoom room = getRoomForPlayer(player, code);
+        PvpEmoteEvent event;
+        synchronized (room) {
+            if (room.getStatus() != PvpRoomStatus.IN_PROGRESS) {
+                throw new RegraInvalidaException("Partida PvP ainda nao esta em andamento.");
+            }
+
+            PvpSide side = room.sideOf(player);
+            if (side == null) {
+                throw new AccessDeniedException("Jogador nao pertence a sala PvP.");
+            }
+
+            EmoteAdminDTO emote = emoteService.buscarAdmin(emoteId);
+
+            Instant now = Instant.now();
+            Instant lastEmote = side == PvpSide.CREATOR
+                    ? room.getCreatorLastEmoteAt()
+                    : room.getGuestLastEmoteAt();
+            if (lastEmote != null && Duration.between(lastEmote, now).compareTo(EMOTE_COOLDOWN) < 0) {
+                throw new RegraInvalidaException("Aguarde antes de enviar outro emote.");
+            }
+
+            if (side == PvpSide.CREATOR) {
+                room.setCreatorLastEmoteAt(now);
+            } else {
+                room.setGuestLastEmoteAt(now);
+            }
+
+            event = PvpEmoteEvent.builder()
+                    .roomCode(room.getCode())
+                    .senderId(player)
+                    .senderSide(side.name())
+                    .emoteId(emote.getId())
+                    .gifUrl(emote.getGifUrl())
+                    .sentAt(now)
+                    .build();
+        }
+        publishEmote(room, event);
+        return event;
     }
 
     private void validateDeckIfPresent(String username, String deckId) {
@@ -200,6 +255,39 @@ public class PvpService {
     private void sendTo(PvpRoom room, String username) {
         if (username == null || username.isBlank()) return;
         messagingTemplate.convertAndSendToUser(username, "/queue/pvp/" + room.getCode(), stateFor(room, username));
+    }
+
+    private void publishEmote(PvpRoom room, PvpEmoteEvent event) {
+        sendEmoteTo(room.getCreatorId(), room.getCode(), event);
+        sendEmoteTo(room.getGuestId(), room.getCode(), event);
+    }
+
+    private void sendEmoteTo(String username, String code, PvpEmoteEvent event) {
+        if (username == null || username.isBlank()) return;
+        messagingTemplate.convertAndSendToUser(username, "/queue/pvp/" + code + "/emotes", event);
+    }
+
+    private void recordResultIfNeeded(PvpRoom room) {
+        if (room.isResultRecorded()
+                || room.getGuestId() == null
+                || room.getGameService() == null
+                || room.getGameService().getCampo() == null) {
+            return;
+        }
+        String winnerId = winnerId(room.getGameService().getCampo().getVencedor(), room);
+        matchHistoryService.recordPvpResult(
+                room.getCode(),
+                room.getCreatorId(),
+                room.getGuestId(),
+                winnerId,
+                room.getGameService().getCampo().getTurnoAtual());
+        room.setResultRecorded(true);
+    }
+
+    private String winnerId(String vencedorCampo, PvpRoom room) {
+        if ("JOGADOR".equals(vencedorCampo)) return room.getCreatorId();
+        if ("INIMIGO".equals(vencedorCampo)) return room.getGuestId();
+        return null;
     }
 
     private String newCode() {

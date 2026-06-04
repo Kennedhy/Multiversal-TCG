@@ -5,6 +5,7 @@ import com.team.multiversaltcg.game.service.GameService;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class PvpRoom {
     private GameService gameService;
     private TurnoJogador creatorPendingTurn;
     private TurnoJogador guestPendingTurn;
+    private Instant creatorLastEmoteAt;
+    private Instant guestLastEmoteAt;
+    private boolean resultRecorded;
 
     @Builder.Default
     private List<String> lastLog = new ArrayList<>();

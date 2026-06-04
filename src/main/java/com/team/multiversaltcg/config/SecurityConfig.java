@@ -39,8 +39,10 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/ws/**",
                                 "/api/game/**",
+                                "/api/ranking",
                                 "/api/cards/**",
                                 "/api/packs/**",
+                                "/api/emotes/**",
                                 "/api/deck/**",
                                 "/",
                                 "/*.html",
@@ -56,8 +58,10 @@ public class SecurityConfig {
                                 "/assets/**",
                                 "/images/**",
                                 "/uploads/cards/**",
+                                "/uploads/emotes/**",
                                 "/favicon.ico",
                                 "/admin.html",
+                                "/admin-emotes.html",
                                 "/admin.js",
                                 "/admin.css"
                         ).permitAll()

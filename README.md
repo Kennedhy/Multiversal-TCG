@@ -33,7 +33,9 @@ Authorization: Bearer <token>
 | DELETE | `/api/packs/{id}` | Nao | Exclui um pacote. |
 | GET | `/api/deck/default` | Nao | Busca o deck padrao. |
 | PUT | `/api/deck/default` | Nao | Atualiza o deck padrao. |
+| GET | `/api/ranking` | Nao | Lista o ranking geral dos jogadores. Aceita `?limit=50`. |
 | GET | `/api/players/{playerId}/profile` | Sim | Busca o perfil do jogador. |
+| GET | `/api/players/{playerId}/matches` | Sim | Lista o historico de partidas PvP do jogador. Aceita `?limit=30`. |
 | GET | `/api/players/{playerId}/collection` | Sim | Lista a colecao do jogador. |
 | GET | `/api/players/{playerId}/shop` | Sim | Mostra a loja do jogador. |
 | POST | `/api/players/{playerId}/packs/{packId}/buy` | Sim | Compra e abre um pacote especifico. |
@@ -51,3 +53,13 @@ Authorization: Bearer <token>
 | POST | `/api/pvp/rooms/{code}/special` | Sim | Usa a habilidade especial no PvP. |
 
 Obs: nas rotas de jogador, `{playerId}` precisa ser o mesmo usuario do token.
+
+## Ranking e historico
+
+Todo jogador comeca com `0` pontos de ranking.
+
+- Vitoria PvP: `+30` pontos.
+- Derrota PvP: `-15` pontos, sem ficar abaixo de `0`.
+- Empate PvP: `+5` pontos.
+
+O historico e gravado automaticamente quando uma partida PvP termina.

@@ -281,6 +281,12 @@ button:disabled {
     width: 100%;
 }
 
+.emote-card .emote-preview {
+    background: #241913;
+    object-fit: contain;
+    padding: 14px;
+}
+
 .library-card-body {
     display: grid;
     gap: 10px;

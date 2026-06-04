@@ -1,4 +1,16 @@
 const JSON_HEADERS = { "Content-Type": "application/json" };
+const API_BASE = resolveApiBase();
+
+function resolveApiBase() {
+    const configured = localStorage.getItem("adminApiBaseUrl") || localStorage.getItem("apiBaseUrl");
+    if (configured) {
+        return configured.replace(/\/+$/, "");
+    }
+
+    const runningOutsideBackend = window.location.protocol === "file:"
+        || (window.location.hostname && window.location.port && window.location.port !== "8080");
+    return runningOutsideBackend ? "http://localhost:8080" : "";
+}
 
 function authHeaders() {
     const token = localStorage.getItem("token") || localStorage.getItem("authToken");
@@ -6,12 +18,13 @@ function authHeaders() {
 }
 
 async function request(path, options = {}) {
-    const response = await fetch(path, {
-        ...options,
+    const { auth = true, ...fetchOptions } = options;
+    const response = await fetch(`${API_BASE}${path}`, {
+        ...fetchOptions,
         headers: {
-            ...(options.body instanceof FormData ? {} : JSON_HEADERS),
-            ...authHeaders(),
-            ...(options.headers || {}),
+            ...(fetchOptions.body instanceof FormData ? {} : JSON_HEADERS),
+            ...(auth ? authHeaders() : {}),
+            ...(fetchOptions.headers || {}),
         },
     });
 
@@ -51,6 +64,31 @@ export const api = {
     deletePack: (id) => request(`/api/packs/${encodeURIComponent(id)}`, {
         method: "DELETE",
     }),
+    emotes: () => request("/api/emotes", { auth: false }),
+    createEmote: (payload) => request("/api/emotes", {
+        method: "POST",
+        auth: false,
+        body: JSON.stringify(payload),
+    }),
+    updateEmote: (id, payload) => request(`/api/emotes/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        auth: false,
+        body: JSON.stringify(payload),
+    }),
+    deleteEmote: (id) => request(`/api/emotes/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        auth: false,
+    }),
+    uploadEmoteGif: (id, file, nome = "") => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const query = nome ? `?nome=${encodeURIComponent(nome)}` : "";
+        return request(`/api/emotes/${encodeURIComponent(id)}/gif${query}`, {
+            method: "POST",
+            auth: false,
+            body: formData,
+        });
+    },
     uploadImage: (id, rarity, file) => {
         const formData = new FormData();
         formData.append("file", file);

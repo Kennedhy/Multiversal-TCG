@@ -1,6 +1,9 @@
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
+.mvn/certs/
+.mvn/maven-truststore.jks
+data/uploads/
 !**/src/main/**/target/
 !**/src/test/**/target/
 

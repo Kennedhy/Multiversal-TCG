@@ -14,5 +14,9 @@ public class UploadsConfig implements WebMvcConfigurer {
         String uploadPath = Path.of("data", "uploads", "cards").toAbsolutePath().normalize().toUri().toString();
         registry.addResourceHandler("/uploads/cards/**")
                 .addResourceLocations(uploadPath);
+
+        String emoteUploadPath = Path.of("data", "uploads", "emotes").toAbsolutePath().normalize().toUri().toString();
+        registry.addResourceHandler("/uploads/emotes/**")
+                .addResourceLocations(emoteUploadPath);
     }
 }

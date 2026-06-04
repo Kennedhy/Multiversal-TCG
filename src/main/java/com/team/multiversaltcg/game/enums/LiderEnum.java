@@ -1,7 +1,6 @@
 package com.team.multiversaltcg.game.enums;
 
 import java.util.Locale;
-import java.util.Map;
 
 public enum LiderEnum {
 
@@ -26,14 +25,6 @@ public enum LiderEnum {
             "Cada choque vencido aplica +1 Pressao extra no defensor."
     );
 
-    private static final Map<String, LiderEnum> LEGACY_ALIASES = Map.of(
-            "MAO", ASH,
-            "KIM", TAI,
-            "STALIN", PELE,
-            "NAPOLEON", CANARINHO,
-            "GENGHIS", YUGI
-    );
-
     private final String nome;
     private final String passiva;
 
@@ -54,9 +45,6 @@ public enum LiderEnum {
         if (id == null || id.isBlank()) return null;
 
         String normalized = id.trim().toUpperCase(Locale.ROOT);
-        LiderEnum legacy = LEGACY_ALIASES.get(normalized);
-        if (legacy != null) return legacy;
-
         try {
             return LiderEnum.valueOf(normalized);
         } catch (IllegalArgumentException ex) {

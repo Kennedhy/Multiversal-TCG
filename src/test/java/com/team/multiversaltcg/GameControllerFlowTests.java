@@ -13,11 +13,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,6 +53,9 @@ class GameControllerFlowTests {
 
     @Autowired
     private PlayerCollectionService playerCollectionService;
+
+    @SpyBean
+    private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
     void garantirCartasBaseDoTeste() throws Exception {
@@ -228,7 +239,7 @@ class GameControllerFlowTests {
                         .content("""
                                 {
                                   "roomId": "%s",
-                                  "liderId": "MAO",
+                                  "liderId": "ASH",
                                   "playerId": "outro",
                                   "deckId": "%s"
                                 }
@@ -241,7 +252,7 @@ class GameControllerFlowTests {
                         .content("""
                                 {
                                   "roomId": "%s",
-                                  "liderId": "MAO",
+                                  "liderId": "ASH",
                                   "playerId": "outro",
                                   "deckId": "%s"
                                 }
@@ -447,7 +458,7 @@ class GameControllerFlowTests {
                             .content("""
                                     {
                                       "roomId": "%s",
-                                      "liderId": "MAO"
+                                      "liderId": "ASH"
                                     }
                                     """.formatted(roomId)))
                     .andExpect(status().isOk())
@@ -480,7 +491,7 @@ class GameControllerFlowTests {
                         .content("""
                                 {
                                   "roomId": "%s",
-                                  "liderId": "MAO",
+                                  "liderId": "ASH",
                                   "playerId": "%s",
                                   "deckId": "%s"
                                 }
@@ -509,7 +520,7 @@ class GameControllerFlowTests {
         mockMvc.perform(post("/api/pvp/rooms")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(creatorDeck)))
                 .andExpect(status().isForbidden());
 
@@ -517,7 +528,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(creatorToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(creatorDeck)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("WAITING"))
@@ -532,7 +543,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(creatorToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(creatorDeck)))
                 .andExpect(status().isBadRequest());
 
@@ -540,7 +551,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(guestToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(guestDeck)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"))
@@ -550,7 +561,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(intruderToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(intruderDeck)))
                 .andExpect(status().isBadRequest());
 
@@ -602,7 +613,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(creatorToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "liderId": "MAO" }
+                                { "liderId": "ASH" }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("WAITING"))
@@ -615,7 +626,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(guestToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "liderId": "MAO" }
+                                { "liderId": "ASH" }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
@@ -644,7 +655,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(creatorToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(creatorDeck)))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -655,7 +666,7 @@ class GameControllerFlowTests {
                         .header("Authorization", bearer(guestToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                { "deckId": "%s", "liderId": "MAO" }
+                                { "deckId": "%s", "liderId": "ASH" }
                                 """.formatted(guestDeck)))
                 .andExpect(status().isOk());
 
@@ -680,6 +691,210 @@ class GameControllerFlowTests {
                 .andExpect(jsonPath("$.state.armadilhaInimigoAtiva").value(true))
                 .andExpect(jsonPath("$.state.armadilhaInimigo.oculta").value(true))
                 .andExpect(jsonPath("$.state.armadilhaInimigo.nome").value("Carta oculta"));
+    }
+
+    @Test
+    void pvpEmotesValidamCatalogoCooldownEPublicamGif() throws Exception {
+        String creator = "emo_a_" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        String guest = "emo_b_" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        String intruder = "emo_c_" + UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        String creatorToken = registrarUsuario(creator, "senha123");
+        String guestToken = registrarUsuario(guest, "senha123");
+        String intruderToken = registrarUsuario(intruder, "senha123");
+
+        String createResponse = mockMvc.perform(post("/api/pvp/rooms")
+                        .header("Authorization", bearer(creatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "liderId": "ASH" }
+                                """))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        String code = objectMapper.readTree(createResponse).get("code").asText();
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .header("Authorization", bearer(creatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "HELLO" }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("andamento")));
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/join", code)
+                        .header("Authorization", bearer(guestToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "liderId": "ASH" }
+                                """))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "HELLO" }
+                                """))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .header("Authorization", bearer(intruderToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "HELLO" }
+                                """))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", "SALA00")
+                        .header("Authorization", bearer(creatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "HELLO" }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .header("Authorization", bearer(creatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "INVALIDO" }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("Emote invalido")));
+
+        mockMvc.perform(post("/api/emotes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "LAUGH_PVP",
+                                  "nome": "Risada PvP",
+                                  "gifUrl": "/assets/emotes/laugh_pvp.gif"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("Risada PvP"));
+
+        reset(messagingTemplate);
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .header("Authorization", bearer(creatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "HELLO" }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roomCode").value(code))
+                .andExpect(jsonPath("$.senderId").value(creator))
+                .andExpect(jsonPath("$.senderSide").value("CREATOR"))
+                .andExpect(jsonPath("$.emoteId").value("HELLO"))
+                .andExpect(jsonPath("$.gifUrl").value("/assets/emotes/hello.gif"))
+                .andExpect(jsonPath("$.sentAt").exists());
+
+        String emoteDestination = "/queue/pvp/" + code + "/emotes";
+        verify(messagingTemplate, times(1)).convertAndSendToUser(
+                eq(creator),
+                eq(emoteDestination),
+                argThat(payload -> payload.toString().contains("emoteId=HELLO")
+                        && payload.toString().contains("gifUrl=/assets/emotes/hello.gif")));
+        verify(messagingTemplate, times(1)).convertAndSendToUser(
+                eq(guest),
+                eq(emoteDestination),
+                argThat(payload -> payload.toString().contains("emoteId=HELLO")
+                        && payload.toString().contains("gifUrl=/assets/emotes/hello.gif")));
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .header("Authorization", bearer(creatorToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "THANKS" }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("Aguarde")));
+
+        mockMvc.perform(post("/api/pvp/rooms/{code}/emotes", code)
+                        .header("Authorization", bearer(guestToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "emoteId": "Risada PvP" }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.senderId").value(guest))
+                .andExpect(jsonPath("$.senderSide").value("GUEST"))
+                .andExpect(jsonPath("$.emoteId").value("Risada PvP"))
+                .andExpect(jsonPath("$.gifUrl").value("/assets/emotes/laugh_pvp.gif"));
+    }
+
+    @Test
+    void adminListaAtualizaEEnviaGifDeEmote() throws Exception {
+        mockMvc.perform(get("/api/emotes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.id == 'HELLO')]").exists())
+                .andExpect(jsonPath("$[?(@.id == 'HELLO')].gifUrl").value(org.hamcrest.Matchers.hasItem("/assets/emotes/hello.gif")));
+
+        mockMvc.perform(post("/api/emotes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "id": "LAUGH",
+                                  "nome": "Risada",
+                                  "gifUrl": "/assets/emotes/laugh.gif"
+                                }
+                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("Risada"))
+                .andExpect(jsonPath("$.nome").value("Risada"))
+                .andExpect(jsonPath("$.gifUrl").value("/assets/emotes/laugh.gif"));
+
+        mockMvc.perform(get("/api/emotes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.id == 'Risada')]").exists());
+
+        mockMvc.perform(put("/api/emotes/{id}", "ANGRY")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "gifUrl": "/assets/emotes/custom_angry.gif" }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("ANGRY"))
+                .andExpect(jsonPath("$.gifUrl").value("/assets/emotes/custom_angry.gif"));
+
+        MockMultipartFile invalid = new MockMultipartFile(
+                "file", "angry.png", "image/png", new byte[]{1, 2, 3, 4});
+        mockMvc.perform(multipart("/api/emotes/{id}/gif", "ANGRY").file(invalid))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("GIF")));
+
+        MockMultipartFile gif = new MockMultipartFile(
+                "file", "angry.gif", "image/gif", new byte[]{'G', 'I', 'F', '8', '9', 'a'});
+        mockMvc.perform(multipart("/api/emotes/{id}/gif", "ANGRY").file(gif))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("ANGRY"))
+                .andExpect(jsonPath("$.gifUrl").value(org.hamcrest.Matchers.startsWith("/uploads/emotes/ANGRY-")));
+
+        MockMultipartFile novoGif = new MockMultipartFile(
+                "file", "dance.gif", "image/gif", new byte[]{'G', 'I', 'F', '8', '9', 'a'});
+        mockMvc.perform(multipart("/api/emotes/{id}/gif", "DANCE")
+                        .file(novoGif)
+                        .param("nome", "Danca"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("Danca"))
+                .andExpect(jsonPath("$.nome").value("Danca"))
+                .andExpect(jsonPath("$.gifUrl").value(org.hamcrest.Matchers.startsWith("/uploads/emotes/DANCE-")));
+
+        mockMvc.perform(delete("/api/emotes/{id}", "HELLO"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("padrao")));
+
+        mockMvc.perform(delete("/api/emotes/{id}", "Risada"))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(post("/api/emotes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                { "id": "SEM_GIF", "nome": "Sem GIF" }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("URL do GIF")));
     }
 
     private String registrarUsuario(String username, String password) throws Exception {
@@ -813,7 +1028,7 @@ class GameControllerFlowTests {
                         .content("""
                                 {
                                   "roomId": "%s",
-                                  "liderId": "MAO"
+                                  "liderId": "ASH"
                                 }
                                 """.formatted(roomId)))
                 .andExpect(status().isOk())

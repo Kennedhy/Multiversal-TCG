@@ -37,6 +37,22 @@ public class PlayerProfile {
     @Column(nullable = false, columnDefinition = "integer default 0")
     private boolean initialBonusGranted;
 
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    @Builder.Default
+    private int rankingPoints = 0;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int matchesPlayed;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int wins;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int losses;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private int draws;
+
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();

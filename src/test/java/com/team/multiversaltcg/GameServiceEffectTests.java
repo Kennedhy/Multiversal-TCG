@@ -272,7 +272,7 @@ class GameServiceEffectTests {
 
     private GameService novoJogo() {
         GameService service = new GameService(cartas);
-        service.iniciarPartida("MAO");
+        service.iniciarPartida("ASH");
         return service;
     }
 

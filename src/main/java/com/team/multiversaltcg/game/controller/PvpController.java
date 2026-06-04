@@ -2,6 +2,8 @@ package com.team.multiversaltcg.game.controller;
 
 import com.team.multiversaltcg.game.dto.PvpRoomResponse;
 import com.team.multiversaltcg.game.dto.PvpStateResponse;
+import com.team.multiversaltcg.game.dto.PvpEmoteEvent;
+import com.team.multiversaltcg.game.dto.PvpEmoteRequest;
 import com.team.multiversaltcg.game.dto.TurnoDTO;
 import com.team.multiversaltcg.game.model.PartidaEncerradaException;
 import com.team.multiversaltcg.game.model.RegraInvalidaException;
@@ -69,6 +71,14 @@ public class PvpController {
                                  Authentication authentication) {
         if (turnoDTO == null) throw new RegraInvalidaException("Payload de turno e obrigatorio.");
         return pvpService.submitTurn(username(authentication), code, turnoDTO.toTurnoJogador());
+    }
+
+    @PostMapping("/rooms/{code}/emotes")
+    public PvpEmoteEvent emote(@PathVariable String code,
+                               @RequestBody(required = false) PvpEmoteRequest request,
+                               Authentication authentication) {
+        if (request == null) throw new RegraInvalidaException("Payload de emote e obrigatorio.");
+        return pvpService.sendEmote(username(authentication), code, request.getEmoteId());
     }
 
     @ExceptionHandler(RegraInvalidaException.class)
