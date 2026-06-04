@@ -18,12 +18,6 @@ Backend Spring Boot do Multiversal TCG, com partidas PvE, salas PvP, colecao de 
 ./mvnw spring-boot:run
 ```
 
-No Windows:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
 A API sobe por padrao em:
 
 ```text
@@ -64,12 +58,6 @@ O schema e atualizado automaticamente pelo Hibernate durante o desenvolvimento.
 
 ```bash
 ./mvnw test
-```
-
-No Windows:
-
-```powershell
-.\mvnw.cmd test
 ```
 
 ## Ranking
