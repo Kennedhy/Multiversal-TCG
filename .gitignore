@@ -4,6 +4,7 @@ target/
 .mvn/certs/
 .mvn/maven-truststore.jks
 data/uploads/
+/test/
 !**/src/main/**/target/
 !**/src/test/**/target/
 

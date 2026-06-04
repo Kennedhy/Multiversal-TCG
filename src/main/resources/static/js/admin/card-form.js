@@ -383,7 +383,7 @@ async function uploadImage() {
         if (input) input.value = result.imageUrl;
         fields.imageFile.value = "";
         updatePreview();
-        showToast(`Imagem ${formatEnum(rarity)} enviada.`);
+        showToast(`Imagem ${formatEnum(rarity)} enviada em WebP.`);
     } catch (error) {
         showToast(error.message, "error");
     } finally {

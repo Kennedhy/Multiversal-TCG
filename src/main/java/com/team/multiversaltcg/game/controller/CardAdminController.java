@@ -4,10 +4,10 @@ import com.team.multiversaltcg.game.dto.CardAdminDTO;
 import com.team.multiversaltcg.game.dto.DeckDefaultDTO;
 import com.team.multiversaltcg.game.dto.ImageUploadDTO;
 import com.team.multiversaltcg.game.model.RegraInvalidaException;
+import com.team.multiversaltcg.game.service.CardImageUploadService;
 import com.team.multiversaltcg.game.service.CartaDataService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,25 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 @RestController
 public class CardAdminController {
 
-    private static final long MAX_IMAGE_BYTES = 2 * 1024 * 1024;
-    private static final Set<String> EXTENSIONS = Set.of("png", "jpg", "jpeg", "webp");
-
     private final CartaDataService cartaDataService;
-    private final Path uploadRoot = Path.of("data", "uploads", "cards").toAbsolutePath().normalize();
+    private final CardImageUploadService cardImageUploadService;
 
-    public CardAdminController(CartaDataService cartaDataService) {
+    public CardAdminController(CartaDataService cartaDataService,
+                               CardImageUploadService cardImageUploadService) {
         this.cartaDataService = cartaDataService;
+        this.cardImageUploadService = cardImageUploadService;
     }
 
     @GetMapping("/api/cards")
@@ -77,27 +71,7 @@ public class CardAdminController {
     public ImageUploadDTO upload(@PathVariable String id,
                                   @RequestParam(required = false) String rarity,
                                   @RequestPart("file") MultipartFile file) throws IOException {
-        if (file == null || file.isEmpty()) {
-            throw new RegraInvalidaException("Arquivo de imagem e obrigatorio.");
-        }
-        if (file.getSize() > MAX_IMAGE_BYTES) {
-            throw new RegraInvalidaException("Imagem deve ter no maximo 2 MB.");
-        }
-        String extension = extension(file.getOriginalFilename());
-        if (!EXTENSIONS.contains(extension)) {
-            throw new RegraInvalidaException("Formato de imagem invalido. Use PNG, JPG ou WebP.");
-        }
-
-        Files.createDirectories(uploadRoot);
-        String safeId = id.replaceAll("[^a-zA-Z0-9_-]", "_");
-        String filename = safeId + "-" + UUID.randomUUID() + "." + extension;
-        Path target = uploadRoot.resolve(filename).normalize();
-        if (!target.startsWith(uploadRoot)) {
-            throw new RegraInvalidaException("Caminho de upload invalido.");
-        }
-        file.transferTo(target);
-
-        String imageUrl = "/uploads/cards/" + filename;
+        String imageUrl = cardImageUploadService.salvarComoWebp(id, file);
         cartaDataService.atualizarImagem(id, imageUrl, rarity);
         return new ImageUploadDTO(imageUrl);
     }
@@ -110,11 +84,6 @@ public class CardAdminController {
     @PutMapping("/api/deck/default")
     public DeckDefaultDTO salvarDeck(@RequestBody DeckDefaultDTO dto) {
         return cartaDataService.salvarDeckDefault(dto);
-    }
-
-    private String extension(String filename) {
-        String ext = StringUtils.getFilenameExtension(filename);
-        return ext == null ? "" : ext.toLowerCase(Locale.ROOT);
     }
 
     @ExceptionHandler(RegraInvalidaException.class)

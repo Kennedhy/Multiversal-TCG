@@ -17,6 +17,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -437,10 +441,12 @@ class GameControllerFlowTests {
                     .andExpect(jsonPath("$.id").value(id));
 
             MockMultipartFile file = new MockMultipartFile(
-                    "file", "card.png", "image/png", new byte[]{1, 2, 3, 4});
+                    "file", "card.png", "image/png", tinyPng());
             mockMvc.perform(multipart("/api/cards/{id}/image", id).file(file))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.startsWith("/uploads/cards/")));
+                    .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.allOf(
+                            org.hamcrest.Matchers.startsWith("/uploads/cards/"),
+                            org.hamcrest.Matchers.endsWith(".webp"))));
 
             JsonNode deck = objectMapper.readTree(mockMvc.perform(get("/api/deck/default"))
                     .andExpect(status().isOk())
@@ -479,6 +485,48 @@ class GameControllerFlowTests {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(deckOriginal))
                     .andExpect(status().isOk());
+            mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/cards/{id}", id));
+        }
+    }
+
+    @Test
+    void uploadDeImagemDaCartaConvertePngEJpgParaWebpERejeitaArquivoInvalido() throws Exception {
+        String id = "upload_webp_" + UUID.randomUUID().toString().replace("-", "");
+        try {
+            criarMonstroTeste(id, "Upload WebP", 0);
+
+            MockMultipartFile png = new MockMultipartFile(
+                    "file", "card.png", "image/png", tinyPng());
+            mockMvc.perform(multipart("/api/cards/{id}/image", id).file(png))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.allOf(
+                            org.hamcrest.Matchers.startsWith("/uploads/cards/"),
+                            org.hamcrest.Matchers.endsWith(".webp"))));
+
+            MockMultipartFile jpg = new MockMultipartFile(
+                    "file", "card.jpg", "image/jpeg", tinyJpg());
+            mockMvc.perform(multipart("/api/cards/{id}/image", id)
+                            .file(jpg)
+                            .param("rarity", "RARO"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.allOf(
+                            org.hamcrest.Matchers.startsWith("/uploads/cards/"),
+                            org.hamcrest.Matchers.endsWith(".webp"))));
+
+            MockMultipartFile webp = new MockMultipartFile(
+                    "file", "card.webp", "image/webp", tinyWebp());
+            mockMvc.perform(multipart("/api/cards/{id}/image", id).file(webp))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.imageUrl").value(org.hamcrest.Matchers.allOf(
+                            org.hamcrest.Matchers.startsWith("/uploads/cards/"),
+                            org.hamcrest.Matchers.endsWith(".webp"))));
+
+            MockMultipartFile invalid = new MockMultipartFile(
+                    "file", "broken.png", "image/png", new byte[]{1, 2, 3, 4});
+            mockMvc.perform(multipart("/api/cards/{id}/image", id).file(invalid))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.erro").value(org.hamcrest.Matchers.containsString("Imagem invalida")));
+        } finally {
             mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/cards/{id}", id));
         }
     }
@@ -1048,6 +1096,26 @@ class GameControllerFlowTests {
                 .getContentAsString();
 
         return objectMapper.readTree(response);
+    }
+
+    private byte[] tinyPng() throws Exception {
+        return tinyImage("png");
+    }
+
+    private byte[] tinyJpg() throws Exception {
+        return tinyImage("jpg");
+    }
+
+    private byte[] tinyWebp() throws Exception {
+        return tinyImage("webp");
+    }
+
+    private byte[] tinyImage(String format) throws Exception {
+        BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        image.setRGB(0, 0, Color.MAGENTA.getRGB());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        assertThat(ImageIO.write(image, format, output)).isTrue();
+        return output.toByteArray();
     }
 
     private int primeiroIndiceMonstro(JsonNode estado) {
