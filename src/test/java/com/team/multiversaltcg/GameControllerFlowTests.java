@@ -117,6 +117,17 @@ class GameControllerFlowTests {
     }
 
     @Test
+    void swaggerFicaPublico() throws Exception {
+        mockMvc.perform(get("/v3/api-docs"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.openapi").exists())
+                .andExpect(jsonPath("$.info.title").value("Multiversal TCG API"));
+
+        mockMvc.perform(get("/swagger-ui.html"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
     void decksDoJogadorExigemTokenDoDono() throws Exception {
         String username = "user_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
         String outro = "user_" + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
